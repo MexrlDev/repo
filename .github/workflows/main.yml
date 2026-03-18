@@ -1,4 +1,4 @@
-name: Build DEB from MCPE IPA
+name: Build DEB from IPA
 
 on:
   push:
@@ -9,46 +9,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Extract IPA
-      run: |
-        mkdir work
-        unzip "apps/MCPE 0.10.0.ipa" -d work
+      - name: Extract IPA
+        run: |
+          mkdir -p work
+          unzip "apps/MCPE 0.10.0.ipa" -d work
 
-    - name: Prepare package structure
-      run: |
-        mkdir -p pkg/Applications
-        cp -r work/Payload/*.app pkg/Applications/
+      - name: Prepare package structure
+        run: |
+          mkdir -p pkg/Applications
+          cp -r work/Payload/*.app pkg/Applications/
 
-        mkdir -p pkg/DEBIAN
+          mkdir -p pkg/DEBIAN
+          cat > pkg/DEBIAN/control <<'EOF'
+          Package: com.mcpe.app
+          Name: MCPE
+          Version: 0.10.0
+          Architecture: iphoneos-arm
+          Description: Minecraft PE 0.10.0
+          Maintainer: you
+          Section: Applications
+          EOF
 
-        echo "Package: com.mcpe.app" > pkg/DEBIAN/control
-        echo "Name: MCPE" >> pkg/DEBIAN/control
-        echo "Version: 0.10.0" >> pkg/DEBIAN/control
-        echo "Architecture: iphoneos-arm" >> pkg/DEBIAN/control
-        echo "Description: Minecraft PE 0.10.0" >> pkg/DEBIAN/control
-        echo "Maintainer: you" >> pkg/DEBIAN/control
-        echo "Section: Applications" >> pkg/DEBIAN/control
+      - name: Add postinst
+        run: |
+          cat > pkg/DEBIAN/postinst <<'EOF'
+          #!/bin/bash
+          uicache
+          EOF
+          chmod 755 pkg/DEBIAN/postinst
 
-    - name: Add postinst (uicache)
-      run: |
-        echo "#!/bin/bash" > pkg/DEBIAN/postinst
-        echo "uicache" >> pkg/DEBIAN/postinst
-        chmod 755 pkg/DEBIAN/postinst
+      - name: Fix permissions
+        run: |
+          chmod -R 755 pkg
+          chmod 644 pkg/DEBIAN/control
 
-    - name: Fix permissions
-      run: |
-        chmod -R 755 pkg
-        chmod 644 pkg/DEBIAN/control
+      - name: Build deb
+        run: dpkg-deb -b pkg mcpe.deb
 
-    - name: Build deb
-      run: |
-        dpkg-deb -b pkg mcpe.deb
-
-    - name: Upload deb
-      uses: actions/upload-artifact@v3
-      with:
-        name: mcpe-deb
-        path: mcpe.deb
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcpe-deb
+          path: mcpe.deb
