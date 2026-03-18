@@ -12,6 +12,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install repo tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev gzip
+
       - name: Extract IPA
         run: |
           mkdir -p work
@@ -47,10 +52,24 @@ jobs:
           chmod 644 pkg/DEBIAN/control
 
       - name: Build deb
-        run: dpkg-deb -b pkg mcpe.deb
+        run: |
+          dpkg-deb -b pkg mcpe.deb
+
+      - name: Build Cydia repo files
+        run: |
+          mkdir -p repo/debs
+          cp mcpe.deb repo/debs/
+          dpkg-scanpackages repo/debs /dev/null > repo/Packages
+          gzip -kf repo/Packages
 
       - name: Upload deb
         uses: actions/upload-artifact@v4
         with:
           name: mcpe-deb
           path: mcpe.deb
+
+      - name: Upload repo files
+        uses: actions/upload-artifact@v4
+        with:
+          name: cydia-repo
+          path: repo
