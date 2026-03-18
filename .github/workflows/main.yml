@@ -1,8 +1,7 @@
-name: Build Cydia Repo
+name: Regenerate Cydia Index
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,20 +16,34 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y dpkg-dev gzip
 
-      - name: Prepare repo folders
+      - name: Prepare repo folder
         run: |
+          rm -rf repo
           mkdir -p repo/debs
-          if [ -d debs ]; then cp -r debs/* repo/debs/ 2>/dev/null || true; fi
-          if [ -f CydiaIcon.png ]; then cp CydiaIcon.png repo/; fi
-          if [ -f Release ]; then cp Release repo/; fi
 
-      - name: Generate Packages
+          if [ -d debs ]; then
+            cp -r debs/* repo/debs/ 2>/dev/null || true
+          fi
+
+          if [ -f CydiaIcon.png ]; then
+            cp CydiaIcon.png repo/
+          fi
+
+          if [ -f Release ]; then
+            cp Release repo/
+          fi
+
+      - name: Generate Packages and Packages.gz
         run: |
           dpkg-scanpackages repo/debs /dev/null > repo/Packages
           gzip -kf repo/Packages
 
-      - name: Upload repo artifact
+      - name: Upload repo files
         uses: actions/upload-artifact@v4
         with:
           name: cydia-repo
-          path: repo
+          path: |
+            repo/Packages
+            repo/Packages.gz
+            repo/Release
+            repo/CydiaIcon.png
