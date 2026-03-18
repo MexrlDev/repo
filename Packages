@@ -1,12 +1,13 @@
 Package: com.mcpe.app
 Version: 0.10.0
 Architecture: iphoneos-arm
-Maintainer: Mojang
-Filename: debs/mcpe.deb
-Size: 15346790
-MD5sum: a11f2e17e1ce6a6a9dd971bb9deca79d
-SHA1: 765ecce44063c9ba4aa39f6ead1483dbae58f60c
-SHA256: b808d4d47026624b36d16577c217e12f8ea4845b8924723966e86e9d9421afcc
+Maintainer: you
+Filename: repo/debs/mcpe.deb
+Size: 15346314
+MD5sum: 003758c49f9ad5fbc804b4239ada634e
+SHA1: bdd6ddf4341c32332764e8e5dee0da7a856a21ec
+SHA256: b466e371b1d9edef07705ed58235626ec176123b557c0eb4c80ca9c3c29c0ef9
 Section: Applications
-Description: Minecraft PE 0.10.0, added to be my first test lol.
+Description: Minecraft PE 0.10.0
 Name: MCPE
+
