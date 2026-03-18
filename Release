@@ -1,0 +1,8 @@
+Origin: MaX7
+Label: MaX7
+Suite: stable
+Version: 1.0
+Codename: ios
+Architectures: iphoneos-arm
+Components: main
+Description: MaX7 Cydia Repository
