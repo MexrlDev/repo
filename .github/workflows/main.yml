@@ -1,4 +1,4 @@
-name: Build DEB from IPA
+name: Build Cydia Repo
 
 on:
   push:
@@ -17,58 +17,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y dpkg-dev gzip
 
-      - name: Extract IPA
-        run: |
-          mkdir -p work
-          unzip "apps/MCPE 0.10.0.ipa" -d work
-
-      - name: Prepare package structure
-        run: |
-          mkdir -p pkg/Applications
-          cp -r work/Payload/*.app pkg/Applications/
-
-          mkdir -p pkg/DEBIAN
-          cat > pkg/DEBIAN/control <<'EOF'
-          Package: com.mcpe.app
-          Name: MCPE
-          Version: 0.10.0
-          Architecture: iphoneos-arm
-          Description: Minecraft PE 0.10.0
-          Maintainer: you
-          Section: Applications
-          EOF
-
-      - name: Add postinst
-        run: |
-          cat > pkg/DEBIAN/postinst <<'EOF'
-          #!/bin/bash
-          uicache
-          EOF
-          chmod 755 pkg/DEBIAN/postinst
-
-      - name: Fix permissions
-        run: |
-          chmod -R 755 pkg
-          chmod 644 pkg/DEBIAN/control
-
-      - name: Build deb
-        run: |
-          dpkg-deb -b pkg mcpe.deb
-
-      - name: Build Cydia repo files
+      - name: Prepare repo folders
         run: |
           mkdir -p repo/debs
-          cp mcpe.deb repo/debs/
+          if [ -d debs ]; then cp -r debs/* repo/debs/ 2>/dev/null || true; fi
+          if [ -f CydiaIcon.png ]; then cp CydiaIcon.png repo/; fi
+          if [ -f Release ]; then cp Release repo/; fi
+
+      - name: Generate Packages
+        run: |
           dpkg-scanpackages repo/debs /dev/null > repo/Packages
           gzip -kf repo/Packages
 
-      - name: Upload deb
-        uses: actions/upload-artifact@v4
-        with:
-          name: mcpe-deb
-          path: mcpe.deb
-
-      - name: Upload repo files
+      - name: Upload repo artifact
         uses: actions/upload-artifact@v4
         with:
           name: cydia-repo
