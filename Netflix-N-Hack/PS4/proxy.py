@@ -1,334 +1,421 @@
+#!/usr/bin/env python3
 """
-Mobile Netflix N Hack port
+Netflix-N-Hack Mobile Port
 
 Ported by MexrlDev
 
-Original by Earthonion
+Original by earthonion
 """
 
 import os
 import sys
 import socket
 import threading
-import urllib.request
-import urllib.error
-from pathlib import Path
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from socketserver import ThreadingMixIn
+import select
+import ssl
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlparse
+import struct
+import time
 
-# -------------------- Configuration --------------------
-LISTEN_HOST = "0.0.0.0" #<<< auto get ip, but can be changed
-LISTEN_PORT = 8080
-LOG_SERVER_URL = "http://127.0.0.1:8082/log"
+# ------------------------------
+# 1. Blocklist loading (hosts.txt)
+# ------------------------------
+BLOCKED_DOMAINS = set()
 
-# Hardcoded manifest content (bytes)
-MANIFEST = b'{"app_version":"1.01","override":true,"scripts":[{"src":"inject.js","version":"1.0"}]}'
+def load_blocked_domains():
+    """Load domains from hosts.txt (same dir or parent dir)"""
+    global BLOCKED_DOMAINS
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    possible_paths = [
+        os.path.join(script_dir, "hosts.txt"),
+        os.path.join(script_dir, "..", "hosts.txt"),
+    ]
+    hosts_path = None
+    for p in possible_paths:
+        if os.path.exists(p):
+            hosts_path = p
+            break
 
-# -------------------- Load Blocked Domains --------------------
-BLOCKED = set()
-hosts_path = Path(__file__).parent / "hosts.txt"
-if hosts_path.exists():
-    with open(hosts_path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#"):
+    if not hosts_path:
+        print(f"[!] hosts.txt not found. Tried: {possible_paths}")
+        print("[!] Continuing without blocking list.")
+        return
+
+    try:
+        with open(hosts_path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
                 parts = line.split()
                 domain = parts[-1] if parts else line
-                BLOCKED.add(domain.lower())
-    print(f"[+] Loaded {len(BLOCKED)} blocked domains from hosts.txt")
-else:
-    print(f"[!] WARNING: hosts.txt not found at {hosts_path}")
+                BLOCKED_DOMAINS.add(domain.lower())
+        print(f"[+] Loaded {len(BLOCKED_DOMAINS)} blocked domains from {hosts_path}")
+    except Exception as e:
+        print(f"[!] ERROR loading hosts.txt: {e}")
 
-def is_blocked(hostname):
-    host_lower = hostname.lower()
-    return any(blocked in host_lower for blocked in BLOCKED)
+def is_blocked(hostname: str) -> bool:
+    """Check if hostname matches any blocked domain"""
+    hostname_lower = hostname.lower()
+    for blocked in BLOCKED_DOMAINS:
+        if blocked in hostname_lower:
+            return True
+    return False
 
-# -------------------- Proxy Handler --------------------
-class ProxyHandler(BaseHTTPRequestHandler):
+# ------------------------------
+# 2. TLS SNI parser (for CONNECT blocking)
+# ------------------------------
+def extract_sni_from_client_hello(data: bytes) -> str | None:
+    """
+    Parse the SNI extension from a TLS ClientHello message.
+    Returns hostname string or None if not present or parse fails.
+    """
+    try:
+        # TLS record layer
+        if len(data) < 5:
+            return None
+        if data[0] != 0x16:  # handshake
+            return None
+        # record length
+        record_len = int.from_bytes(data[3:5], 'big')
+        if len(data) < 5 + record_len:
+            return None
+
+        handshake = data[5:5+record_len]
+        if handshake[0] != 0x01:  # client_hello
+            return None
+        # skip handshake header (1 byte type + 3 bytes length)
+        # handshake length is at offset 1..3
+        # client_hello structure:
+        #   legacy_version (2)
+        #   random (32)
+        #   session_id_length (1) + session_id
+        #   cipher_suites_length (2) + cipher_suites
+        #   compression_methods_length (1) + compression_methods
+        #   extensions_length (2) + extensions
+
+        pos = 1 + 3  # skip type+length
+        # client_version (2)
+        pos += 2
+        # random (32)
+        pos += 32
+        # session_id
+        sess_id_len = handshake[pos]
+        pos += 1 + sess_id_len
+        # cipher_suites
+        cs_len = int.from_bytes(handshake[pos:pos+2], 'big')
+        pos += 2 + cs_len
+        # compression_methods
+        comp_len = handshake[pos]
+        pos += 1 + comp_len
+
+        # extensions
+        if pos + 2 > len(handshake):
+            return None
+        ext_len = int.from_bytes(handshake[pos:pos+2], 'big')
+        pos += 2
+        end_ext = pos + ext_len
+
+        while pos + 4 <= end_ext:
+            ext_type = int.from_bytes(handshake[pos:pos+2], 'big')
+            ext_len = int.from_bytes(handshake[pos+2:pos+4], 'big')
+            pos += 4
+            if ext_type == 0x0000:  # server_name
+                # server_name extension: list length (2) + ServerNameList
+                if pos + 2 > end_ext:
+                    break
+                list_len = int.from_bytes(handshake[pos:pos+2], 'big')
+                pos += 2
+                # parse first entry
+                if pos + 3 > end_ext:
+                    break
+                name_type = handshake[pos]
+                name_len = int.from_bytes(handshake[pos+1:pos+3], 'big')
+                pos += 3
+                if name_type == 0x00:  # hostname
+                    host_bytes = handshake[pos:pos+name_len]
+                    return host_bytes.decode('utf-8', errors='ignore')
+                pos += name_len
+            else:
+                pos += ext_len
+        return None
+    except Exception:
+        return None
+
+# ------------------------------
+# 3. TCP tunnel with SNI inspection (CONNECT method)
+# ------------------------------
+def handle_tunnel(client_sock, client_addr):
+    """
+    Read first TLS ClientHello from client, check SNI.
+    If blocked -> close connection.
+    Else -> connect to real server and start bidirectional forwarding.
+    """
+    try:
+        # Peek first bytes to read ClientHello
+        client_sock.settimeout(5)
+        first_data = client_sock.recv(4096)
+        if not first_data:
+            client_sock.close()
+            return
+
+        sni = extract_sni_from_client_hello(first_data)
+        target_host = sni if sni else "unknown"
+        print(f"[*] CONNECT SNI: {target_host}")
+
+        if sni and is_blocked(sni):
+            print(f"[*] BLOCKED HTTPS: {sni}")
+            client_sock.close()
+            return
+
+    except Exception as e:
+        print(f"[!] Tunnel error: {e}")
+        client_sock.close()
+        return
+
+# ------------------------------
+# 4. Custom HTTP Proxy Handler
+# ------------------------------
+class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     timeout = 30
 
-    def log_message(self, format, *args):
-        pass
-
     def do_CONNECT(self):
+        # Parse host:port from path
         host, port = self.path.split(":")
         port = int(port)
-
-        if is_blocked(host):
-            self.send_error(403, f"Blocked domain: {host}")
-            print(f"[*] Blocked CONNECT: {host}:{port}")
+        self.connection.settimeout(5)
+        try:
+            first_data = self.connection.recv(4096, socket.MSG_PEEK)
+        except socket.timeout:
+            self.send_error(504, "Gateway Timeout")
             return
 
-        print(f"[*] CONNECT tunnel to {host}:{port}")
+        sni = extract_sni_from_client_hello(first_data)
+        print(f"[*] CONNECT {host}:{port} -> SNI: {sni}")
+
+        if sni and is_blocked(sni):
+            self.send_error(403, f"Blocked: {sni}")
+            print(f"[*] BLOCKED HTTPS: {sni}")
+            return
+
+        # Send 200 Connection Established
+        self.send_response(200, "Connection Established")
+        self.end_headers()
+
+        # Now consume the peeked data and start tunneling
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as remote:
-                remote.settimeout(self.timeout)
-                remote.connect((host, port))
+            _ = self.connection.recv(len(first_data))
 
-                self.send_response(200, "Connection Established")
-                self.end_headers()
-                self._tunnel(self.connection, remote)
+            # Connect to remote server
+            remote_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            remote_sock.settimeout(30)
+            remote_sock.connect((host, port))
+
+            # Forward data both ways
+            self._tunnel_bidirectional(self.connection, remote_sock)
         except Exception as e:
-            print(f"[!] CONNECT error: {e}")
-            self.send_error(502, "Bad Gateway")
+            print(f"[!] Tunnel failed for {host}:{port}: {e}")
+        finally:
+            self.connection.close()
 
-    def _tunnel(self, client, remote):
-        """Bidirectional copy."""
-        def forward(src, dst):
-            try:
-                while True:
-                    data = src.recv(8192)
+    def _tunnel_bidirectional(self, client_sock, remote_sock):
+        """Forward data between client and remote."""
+        try:
+            client_sock.settimeout(0.1)
+            remote_sock.settimeout(0.1)
+            while True:
+                rlist, _, _ = select.select([client_sock, remote_sock], [], [], 1)
+                if client_sock in rlist:
+                    data = client_sock.recv(8192)
                     if not data:
                         break
-                    dst.sendall(data)
-            except:
-                pass
-            finally:
-                src.close()
-                dst.close()
+                    remote_sock.sendall(data)
+                if remote_sock in rlist:
+                    data = remote_sock.recv(8192)
+                    if not data:
+                        break
+                    client_sock.sendall(data)
+        except Exception:
+            pass
+        finally:
+            remote_sock.close()
 
-        t1 = threading.Thread(target=forward, args=(client, remote))
-        t2 = threading.Thread(target=forward, args=(remote, client))
-        t1.daemon = t2.daemon = True
-        t1.start(); t2.start()
-        t1.join(self.timeout); t2.join(self.timeout)
+    def do_GET(self):
+        self._handle_request()
 
-    def do_GET(self): self._handle_request()
-    def do_POST(self): self._handle_request()
-    def do_PUT(self): self._handle_request()
-    def do_DELETE(self): self._handle_request()
-    def do_HEAD(self): self._handle_request()
+    def do_POST(self):
+        self._handle_request()
+
+    def do_HEAD(self):
+        self._handle_request()
+
+    def do_PUT(self):
+        self._handle_request()
+
+    def do_DELETE(self):
+        self._handle_request()
 
     def _handle_request(self):
-        host = self.headers.get("Host")
+        """Process HTTP request and optionally inject response."""
+        # Parse URL
+        parsed = urlparse(self.path)
+        host = self.headers.get("Host", "")
         if not host:
             self.send_error(400, "Missing Host header")
             return
 
-        hostname = host.split(":")[0]  # Extract hostname without port
+        print(f"[*] {self.command} {host}{parsed.path}")
 
-        if is_blocked(hostname):
-            self.send_error(404, "Blocked")
-            print(f"[*] Blocked HTTP: {host}{self.path}")
+        # Check blacklist
+        if is_blocked(host):
+            self.send_injected_response(404, b"Blocked", {"Content-Type": "text/plain"})
+            print(f"[*] BLOCKED HTTP: {host}")
             return
 
-        # ===== INTERCEPTIONS =====
-        # Netflix corruption
-        if "netflix" in hostname.lower():
-            self._serve_netflix_corrupt()
+        # Special handling for Netflix
+        if "netflix" in host:
+            self.send_injected_response(
+                200, b"uwu",
+                {"Content-Type": "application/x-msl+json"}
+            )
+            print(f"[*] Corrupted Netflix: {host}")
             return
 
-        # Specific JS injection for error page
-        if "/js/common/config/text/config.text.lruderrorpage" in self.path:
-            self._serve_inject_auto_bundle()
+        # Injection paths
+        path = parsed.path
+        if "/js/common/config/text/config.text.lruderrorpage" in path:
+            inject_file = os.path.join(os.path.dirname(__file__), "inject_auto_bundle.js")
+            self._inject_file(inject_file, "inject_auto_bundle.js")
             return
 
-        # Specific JS injection for lapse.js
-        if "/js/lapse.js" in self.path:
-            self._serve_lapse_js()
-            return
-        # ===========================================================
-
-        # Existing interceptions
-        if "/_log" in self.path:
-            self._handle_log()
+        if "/js/lapse.js" in path:
+            inject_file = os.path.join(os.path.dirname(__file__), "payloads", "lapse.js")
+            self._inject_file(inject_file, "lapse.js")
             return
 
-        if "manifest.json.aes" in self.path:
-            self._serve_manifest()
-            return
-
-        if self.path.endswith(".js"):
-            filename = self.path.split("/")[-1]
-            js_path = Path(__file__).parent / filename
-            if js_path.exists():
-                self._serve_file(js_path, "application/javascript")
-                print(f"[+] Served local JS: {filename}")
-                return
-				
+        # Otherwise forward request to real server
         self._forward_request()
 
-    # ---------- Interception Handlers ----------
-    def _serve_netflix_corrupt(self):
-        print(f"[*] Corrupted Netflix response for: {self.headers.get('Host')}")
-        self.send_response(200)
-        self.send_header("Content-Type", "application/x-msl+json")
-        self.end_headers()
-        self.wfile.write(b"uwu")
-
-    def _serve_inject_auto_bundle(self):
-        inject_path = Path(__file__).parent / "inject_auto_bundle.js"
-        print(f"[*] Injecting JavaScript from: {inject_path}")
-        if inject_path.exists():
-            self._serve_file(inject_path, "application/javascript")
-        else:
-            print(f"[!] ERROR: inject_auto_bundle.js not found")
-            self.send_error(404, "inject_auto_bundle.js not found - run ./bundle_auto.sh")
-
-    def _serve_lapse_js(self):
-        """Serve lapse.js from payloads/ subdirectory."""
-        lapse_path = Path(__file__).parent / "payloads" / "lapse.js"
-        print(f"[*] Injecting JavaScript from: {lapse_path}")
-        if lapse_path.exists():
-            self._serve_file(lapse_path, "application/javascript")
-        else:
-            print(f"[!] ERROR: lapse.js not found")
-            self.send_error(404, "lapse.js not found")
-
-    # ---------- Existing Handlers ----------
-    def _handle_log(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len) if content_len > 0 else b""
+    def _inject_file(self, filepath, desc):
+        """Respond with content from local file."""
         try:
-            print(f"[PROXY] Log: {body.decode('utf-8', errors='ignore')}")
-        except:
-            print(f"[PROXY] Log (binary): {len(body)} bytes")
+            with open(filepath, "rb") as f:
+                content = f.read()
+            self.send_injected_response(200, content, {"Content-Type": "application/javascript"})
+            print(f"[+] Injected {desc} ({len(content)} bytes)")
+        except FileNotFoundError:
+            self.send_injected_response(
+                404,
+                f"File not found: {desc}".encode(),
+                {"Content-Type": "text/plain"}
+            )
+            print(f"[!] Missing file: {filepath}")
 
-        try:
-            req = urllib.request.Request(LOG_SERVER_URL, data=body,
-                                         headers={"Content-Type": "application/json"},
-                                         method="POST")
-            urllib.request.urlopen(req, timeout=2)
-            print("[PROXY] Forwarded to log server")
-        except Exception as e:
-            print(f"[PROXY] Forward failed: {e}")
-
-        self.send_response(200)
-        self.send_header("Content-Type", "text/plain")
+    def send_injected_response(self, code, body_bytes, headers):
+        """Send a custom HTTP response."""
+        self.send_response(code)
+        for k, v in headers.items():
+            self.send_header(k, v)
+        self.send_header("Content-Length", str(len(body_bytes)))
         self.end_headers()
-        self.wfile.write(b"ok")
-
-    def _serve_manifest(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-        self.wfile.write(MANIFEST)
-        print("[+] Served manifest override")
-
-    def _serve_file(self, path, content_type):
-        try:
-            data = path.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", len(data))
-            self.end_headers()
-            self.wfile.write(data)
-        except Exception as e:
-            self.send_error(500, f"File error: {e}")
+        self.wfile.write(body_bytes)
 
     def _forward_request(self):
-        host = self.headers.get("Host")
-        if not host:
-            self.send_error(400, "Missing Host header")
-            return
-
-        hostname = host.split(":")[0]
-
+        """Forward request to upstream server and relay response."""
         try:
-            resolved_ip = socket.gethostbyname(hostname)
-        except socket.gaierror as e:
-            print(f"[!] DNS resolution failed for {hostname}: {e}")
-            self.send_error(502, f"DNS resolution failed: {e}")
-            return
+            # Prepare upstream request
+            parsed = urlparse(self.path)
+            host = self.headers.get("Host")
+            port = 80
+            if ":" in host:
+                host, port = host.split(":")
+                port = int(port)
 
-        url = f"http://{resolved_ip}{self.path}"
+            # Create socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(30)
+            sock.connect((host, port))
 
-        headers = dict(self.headers)
-        for h in ["Proxy-Connection", "Connection", "Keep-Alive",
-                  "Proxy-Authenticate", "Proxy-Authorization",
-                  "TE", "Trailer", "Transfer-Encoding", "Upgrade"]:
-            headers.pop(h, None)
-        headers["Host"] = host
+            # Build request line
+            path = parsed.path or "/"
+            if parsed.query:
+                path += "?" + parsed.query
+            request_line = f"{self.command} {path} HTTP/1.1\r\n"
 
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len) if content_len > 0 else None
+            # Send headers (excluding hop-by-hop)
+            sock.sendall(request_line.encode())
+            for h, v in self.headers.items():
+                if h.lower() not in ("connection", "proxy-connection", "keep-alive"):
+                    sock.sendall(f"{h}: {v}\r\n".encode())
+            sock.sendall(b"\r\n")
 
-        print(f"[>] {self.command} {url} (Host: {host})")
+            # Send body if present
+            if self.command in ("POST", "PUT") and self.headers.get("Content-Length"):
+                content_len = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(content_len)
+                sock.sendall(body)
 
-        try:
-            req = urllib.request.Request(url, data=body, headers=headers, method=self.command)
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                self.send_response(resp.status)
-                for key, val in resp.getheaders():
-                    if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                           "proxy-authorization", "te", "trailer",
-                                           "transfer-encoding", "upgrade"]:
-                        self.send_header(key, val)
-                self.end_headers()
-                while chunk := resp.read(8192):
-                    self.wfile.write(chunk)
-        except urllib.error.HTTPError as e:
-            self.send_response(e.code)
-            for key, val in e.headers.items():
-                if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                       "proxy-authorization", "te", "trailer",
-                                       "transfer-encoding", "upgrade"]:
-                    self.send_header(key, val)
-            self.end_headers()
-            self.wfile.write(e.read())
+            # Read response
+            resp_data = b""
+            while True:
+                chunk = sock.recv(8192)
+                if not chunk:
+                    break
+                resp_data += chunk
+            sock.close()
+
+            # Relay response back to client
+            self.connection.sendall(resp_data)
         except Exception as e:
             print(f"[!] Forward error: {e}")
-            self.send_error(502, f"Gateway Error: {e}")
+            self.send_error(502, "Bad Gateway")
 
-# -------------------- Threaded Server --------------------
-class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    daemon_threads = True
-
-def get_local_ip():
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
-            return s.getsockname()[0]
-    except:
-        return "127.0.0.1"
-
-def get_all_ips():
-    ips = []
-    try:
-        for info in socket.getaddrinfo(socket.gethostname(), None):
-            addr = info[4][0]
-            if addr not in ips and not addr.startswith("127."):
-                ips.append(addr)
-    except:
+    def log_message(self, format, *args):
+        # Suppress default logging (we have our own)
         pass
-    return ips
 
-def main():
-    bind_addresses = [LISTEN_HOST]
-    if LISTEN_HOST != "0.0.0.0":
-        bind_addresses.append("0.0.0.0")
-    bind_addresses.extend([get_local_ip(), "127.0.0.1"])
-    bind_addresses = list(dict.fromkeys(bind_addresses))
-
-    httpd = None
-    for addr in bind_addresses:
-        try:
-            server_address = (addr, LISTEN_PORT)
-            httpd = ThreadedHTTPServer(server_address, ProxyHandler)
-            print(f"[+] Proxy bound to {addr}:{LISTEN_PORT}")
-            break
-        except OSError as e:
-            print(f"[!] Could not bind to {addr}:{LISTEN_PORT} - {e}")
-
-    if httpd is None:
-        print("[!] Failed to bind to any address.")
-        print("    Available IP addresses on this device:")
-        for ip in get_all_ips():
-            print(f"      - {ip}")
-        sys.exit(1)
-
-    client_ip = get_local_ip()
-    print(f"\n[+] Proxy running!")
-    print(f"[+] Configure your PS4 / router / device proxy settings to:")
-    print(f"      Proxy Server: {client_ip}")
-    print(f"      Proxy Port:   {LISTEN_PORT}")
-    print("[+] Press Ctrl+C to stop.\n")
-
+# ------------------------------
+# 5. Auto-detect local IP
+# ------------------------------
+def get_local_ip():
+    """Return primary non-loopback IPv4 address."""
     try:
-        httpd.serve_forever()
+        # Connect to a public address to determine default route IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        # Fallback: try to get from hostname
+        try:
+            return socket.gethostbyname(socket.gethostname())
+        except:
+            return "127.0.0.1"
+
+# ------------------------------
+# 6. Main entry point
+# ------------------------------
+def main():
+    load_blocked_domains()
+
+    host = "0.0.0.0"
+    port = 8080
+    local_ip = get_local_ip()
+
+    print(f"\n{'='*50}")
+    print(f"Proxy running at http://{local_ip}:{port}")
+    print(f"Set this as HTTP proxy on your device.")
+    print(f"{'='*50}\n")
+
+    server = ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
+    try:
+        server.serve_forever()
     except KeyboardInterrupt:
         print("\n[!] Shutting down...")
-        httpd.shutdown()
+        server.shutdown()
 
 if __name__ == "__main__":
     main()
