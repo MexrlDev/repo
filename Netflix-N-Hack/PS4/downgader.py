@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Mobile Netflix DownGrader Port
 
@@ -6,398 +7,398 @@ Ported by MexrlDev
 Original by Earthonion
 """
 
+
 import os
 import sys
 import socket
-import threading
-import urllib.request
-import urllib.error
-from pathlib import Path
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from socketserver import ThreadingMixIn
+import select
+import logging
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlparse, urlunparse
 
-# -------------------- Configuration --------------------
-LISTEN_HOST = "0.0.0.0"
-LISTEN_PORT = 8080
-LOG_SERVER_URL = "http://127.0.0.1:8082/log"
+# ------------------------------
+# Logging setup
+# ------------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
-# Hardcoded manifest content (bytes)
-MANIFEST = b'{"app_version":"1.01","override":true,"scripts":[{"src":"inject.js","version":"1.0"}]}'
+# ------------------------------
+# 1. Blocklist loading (hosts.txt)
+# ------------------------------
+BLOCKED_DOMAINS = set()
 
-# Netflix downgrade targets
-EU_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA00127_00/108/f_2c294dc5a28917366a122cd32c2d03d000eb2aa27fe651231aaaf143ced665fd/f/EP4350-CUSA00127_00-NETFLIXPOLLUX001-A0153-V0100.json"
-US_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA00129_00/185/f_624fc32fe1d54c3062691b7ed42e78ab0c2bbbc73379a53f92fbff4b619d763a/f/UT0007-CUSA00129_00-NETFLIXPOLLUX001-A0153-V0100.json"
-JP_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA02988_00/104/f_9e6144c11eab87b3ebf340cce86ae456a135e80f848ead1185eb7a3ec19f0abe/f/JA0010-CUSA02988_00-NETFLIXPOLLUX001-A0153-V0100.json"
-NFLIX_CUSAS = ["CUSA00127", "CUSA00129", "CUSA02988"]
+def load_blocked_domains():
+    """Load domains from ../hosts.txt relative to script."""
+    global BLOCKED_DOMAINS
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    hosts_path = os.path.join(script_dir, "..", "hosts.txt")
 
-# -------------------- Load Blocked Domains --------------------
-BLOCKED = set()
-hosts_path = Path(__file__).parent / "hosts.txt"
-if hosts_path.exists():
-    with open(hosts_path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#"):
+    try:
+        with open(hosts_path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
                 parts = line.split()
                 domain = parts[-1] if parts else line
-                BLOCKED.add(domain.lower())
-    print(f"[+] Loaded {len(BLOCKED)} blocked domains from hosts.txt")
-else:
-    print(f"[!] WARNING: hosts.txt not found at {hosts_path}")
+                BLOCKED_DOMAINS.add(domain.lower())
+        logger.info(f"[+] Loaded {len(BLOCKED_DOMAINS)} blocked domains from {hosts_path}")
+    except FileNotFoundError:
+        logger.error(f"[!] WARNING: hosts.txt not found at {hosts_path}")
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f"[!] ERROR loading hosts.txt: {e}")
+        sys.exit(1)
 
-def is_blocked(hostname):
-    host_lower = hostname.lower()
-    return any(blocked in host_lower for blocked in BLOCKED)
+def is_blocked(hostname: str) -> bool:
+    """Check if hostname matches any blocked domain."""
+    hostname_lower = hostname.lower()
+    for blocked in BLOCKED_DOMAINS:
+        if blocked in hostname_lower:
+            return True
+    return False
 
-# -------------------- Proxy Handler --------------------
-class ProxyHandler(BaseHTTPRequestHandler):
+# ------------------------------
+# 2. TLS SNI parser (for CONNECT blocking)
+# ------------------------------
+def extract_sni_from_client_hello(data: bytes) -> str | None:
+    """Parse SNI extension from TLS ClientHello. Returns hostname or None."""
+    try:
+        if len(data) < 5 or data[0] != 0x16:
+            return None
+        record_len = int.from_bytes(data[3:5], 'big')
+        if len(data) < 5 + record_len:
+            return None
+
+        handshake = data[5:5+record_len]
+        if handshake[0] != 0x01:
+            return None
+
+        pos = 1 + 3  # skip type + length
+        pos += 2     # client_version
+        pos += 32    # random
+        sess_id_len = handshake[pos]
+        pos += 1 + sess_id_len
+        cs_len = int.from_bytes(handshake[pos:pos+2], 'big')
+        pos += 2 + cs_len
+        comp_len = handshake[pos]
+        pos += 1 + comp_len
+
+        if pos + 2 > len(handshake):
+            return None
+        ext_len = int.from_bytes(handshake[pos:pos+2], 'big')
+        pos += 2
+        end_ext = pos + ext_len
+
+        while pos + 4 <= end_ext:
+            ext_type = int.from_bytes(handshake[pos:pos+2], 'big')
+            ext_len = int.from_bytes(handshake[pos+2:pos+4], 'big')
+            pos += 4
+            if ext_type == 0x0000:  # server_name
+                if pos + 2 > end_ext:
+                    break
+                list_len = int.from_bytes(handshake[pos:pos+2], 'big')
+                pos += 2
+                if pos + 3 > end_ext:
+                    break
+                name_type = handshake[pos]
+                name_len = int.from_bytes(handshake[pos+1:pos+3], 'big')
+                pos += 3
+                if name_type == 0x00:
+                    host_bytes = handshake[pos:pos+name_len]
+                    return host_bytes.decode('utf-8', errors='ignore')
+                pos += name_len
+            else:
+                pos += ext_len
+        return None
+    except Exception:
+        return None
+
+# ------------------------------
+# 3. Custom HTTP Proxy Handler
+# ------------------------------
+class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     timeout = 30
 
-    def log_message(self, format, *args):
-        pass
+    # PSN redirect constants
+    EU_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA00127_00/108/f_2c294dc5a28917366a122cd32c2d03d000eb2aa27fe651231aaaf143ced665fd/f/EP4350-CUSA00127_00-NETFLIXPOLLUX001-A0153-V0100.json"
+    US_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA00129_00/185/f_624fc32fe1d54c3062691b7ed42e78ab0c2bbbc73379a53f92fbff4b619d763a/f/UT0007-CUSA00129_00-NETFLIXPOLLUX001-A0153-V0100.json"
+    JP_REDIRECT = "http://gs2.ww.prod.dl.playstation.net/gs2/ppkgo/prod/CUSA02988_00/104/f_9e6144c11eab87b3ebf340cce86ae456a135e80f848ead1185eb7a3ec19f0abe/f/JA0010-CUSA02988_00-NETFLIXPOLLUX001-A0153-V0100.json"
+    NFLX_CUSAS = ["CUSA00127", "CUSA00129", "CUSA02988"]
 
     def do_CONNECT(self):
+        """Handle CONNECT method for HTTPS tunneling with SNI blocking."""
         host, port = self.path.split(":")
         port = int(port)
 
-        if is_blocked(host):
-            self.send_error(403, f"Blocked domain: {host}")
-            print(f"[*] Blocked CONNECT: {host}:{port}")
+        # Peek first TLS packet to extract SNI
+        self.connection.settimeout(5)
+        try:
+            first_data = self.connection.recv(4096, socket.MSG_PEEK)
+        except socket.timeout:
+            self.send_error(504, "Gateway Timeout")
             return
 
-        print(f"[*] CONNECT tunnel to {host}:{port}")
+        sni = extract_sni_from_client_hello(first_data)
+        logger.info(f"[*] CONNECT {host}:{port} -> SNI: {sni}")
+
+        if sni and is_blocked(sni):
+            self.send_error(403, f"Blocked: {sni}")
+            logger.info(f"[*] Blocked HTTPS connection to: {sni}")
+            return
+
+        # Send 200 Connection Established
+        self.send_response(200, "Connection Established")
+        self.end_headers()
+
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as remote:
-                remote.settimeout(self.timeout)
-                remote.connect((host, port))
+            # Consume the peeked data
+            _ = self.connection.recv(len(first_data))
 
-                self.send_response(200, "Connection Established")
-                self.end_headers()
-                self._tunnel(self.connection, remote)
+            # Connect to remote server
+            remote_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            remote_sock.settimeout(30)
+            remote_sock.connect((host, port))
+
+            # Bidirectional tunnel
+            self._tunnel_bidirectional(self.connection, remote_sock)
         except Exception as e:
-            print(f"[!] CONNECT error: {e}")
-            self.send_error(502, "Bad Gateway")
+            logger.error(f"[!] Tunnel failed for {host}:{port}: {e}")
+        finally:
+            self.connection.close()
 
-    def _tunnel(self, client, remote):
-        def forward(src, dst):
-            try:
-                while True:
-                    data = src.recv(8192)
+    def _tunnel_bidirectional(self, client_sock, remote_sock):
+        """Forward data between client and remote."""
+        try:
+            client_sock.settimeout(0.1)
+            remote_sock.settimeout(0.1)
+            while True:
+                rlist, _, _ = select.select([client_sock, remote_sock], [], [], 1)
+                if client_sock in rlist:
+                    data = client_sock.recv(8192)
                     if not data:
                         break
-                    dst.sendall(data)
-            except:
-                pass
-            finally:
-                src.close()
-                dst.close()
+                    remote_sock.sendall(data)
+                if remote_sock in rlist:
+                    data = remote_sock.recv(8192)
+                    if not data:
+                        break
+                    client_sock.sendall(data)
+        except Exception:
+            pass
+        finally:
+            remote_sock.close()
 
-        t1 = threading.Thread(target=forward, args=(client, remote))
-        t2 = threading.Thread(target=forward, args=(remote, client))
-        t1.daemon = t2.daemon = True
-        t1.start(); t2.start()
-        t1.join(self.timeout); t2.join(self.timeout)
+    def do_GET(self):
+        self._handle_request()
 
-    def do_GET(self): self._handle_request()
-    def do_POST(self): self._handle_request()
-    def do_PUT(self): self._handle_request()
-    def do_DELETE(self): self._handle_request()
-    def do_HEAD(self): self._handle_request()
+    def do_POST(self):
+        self._handle_request()
+
+    def do_HEAD(self):
+        self._handle_request()
+
+    def do_PUT(self):
+        self._handle_request()
+
+    def do_DELETE(self):
+        self._handle_request()
 
     def _handle_request(self):
-        host = self.headers.get("Host")
+        """Process HTTP request and apply redirect/block rules."""
+        parsed = urlparse(self.path)
+        host = self.headers.get("Host", "")
         if not host:
             self.send_error(400, "Missing Host header")
             return
 
-        hostname = host.split(":")[0]
+        full_url = f"{self.command} {self.path}"
+        logger.info(f"[*] {full_url}")
 
-        if is_blocked(hostname):
-            self.send_error(404, "Blocked")
-            print(f"[*] Blocked HTTP: {host}{self.path}")
+        # --- Special PSN handling for gs2.ww.prod.dl.playstation.net over HTTP ---
+        if self.path.startswith("http://") and "gs2.ww.prod.dl.playstation.net" in self.path:
+            self._handle_psn_request(parsed)
             return
 
-        # ===== Netflix downgrade redirect .. game update corruption =====
-        if "gs2.ww.prod.dl.playstation.net" in hostname and self.path.endswith(".json"):
-            # Check for Netflix CUSA IDs and redirect
-            for idx, cusa in enumerate(NFLIX_CUSAS):
-                if cusa in self.path:
-                    redirect_url = [EU_REDIRECT, US_REDIRECT, JP_REDIRECT][idx]
-                    print(f"[REDIRECT][{cusa}] {self.path}")
-                    print(f"        -> {redirect_url}")
-                    self._forward_to_absolute_url(redirect_url)
-                    return
+        # Also handle if scheme not in path but Host is that domain
+        if "gs2.ww.prod.dl.playstation.net" in host:
+            # Reconstruct URL with scheme
+            scheme = "https" if self.headers.get("X-Forwarded-Proto") == "https" else "http"
+            fake_url = f"{scheme}://{host}{parsed.path}"
+            fake_parsed = urlparse(fake_url)
+            self._handle_psn_request(fake_parsed)
+            return
 
-        if "gs2.ww.prod.dl.playstation.net" in hostname:
-            # Handle .pkg files
-            if ".pkg" in self.path:
-                if any(cusa in self.path for cusa in NFLIX_CUSAS):
-                    print(f"[PKG ALLOWED] {self.path}")
-                else:
-                    print(f"[PKG BLOCKED - no matching CUSA] {self.path}")
-                # For pkg files, just forward normally
+        # Block by domain (hosts.txt)
+        if is_blocked(host):
+            self.send_injected_response(404, b"uwu", {})
+            logger.info(f"[*] Blocked HTTP request to: {host}")
+            return
+
+        # Netflix corruption (if not already handled)
+        if "netflix" in host:
+            self.send_injected_response(
+                200, b"uwu",
+                {"Content-Type": "application/x-msl+json"}
+            )
+            logger.info(f"[*] Corrupted Netflix response for: {host}")
+            return
+
+        # Default: forward to real server
+        self._forward_request(host, parsed)
+
+    def _handle_psn_request(self, parsed_url):
+        """Apply PSN-specific redirects and blocks."""
+        url_str = parsed_url.geturl()
+        path = parsed_url.path
+        host = parsed_url.netloc
+
+        # Check if it's a JSON file for Netflix CUSA
+        if path.endswith(".json"):
+            for cusa in self.NFLX_CUSAS:
+                if cusa in url_str:
+                    redirect_url = None
+                    if cusa == "CUSA00127":
+                        redirect_url = self.EU_REDIRECT
+                    elif cusa == "CUSA00129":
+                        redirect_url = self.US_REDIRECT
+                    elif cusa == "CUSA02988":
+                        redirect_url = self.JP_REDIRECT
+                    if redirect_url:
+                        logger.info(f"[REDIRECT][{cusa}] {url_str}")
+                        logger.info(f"        -> {redirect_url}")
+                        # Change request URL and forward to new destination
+                        new_parsed = urlparse(redirect_url)
+                        self._forward_request(new_parsed.netloc, new_parsed)
+                        return
+            # If JSON but not matching CUSA, fall through to corruption
+
+        # Check if it's a PKG file
+        elif ".pkg" in url_str:
+            allowed = any(cusa in url_str for cusa in self.NFLX_CUSAS)
+            if allowed:
+                logger.info(f"[PKG ALLOWED] {url_str}")
+                self._forward_request(host, parsed_url)
             else:
-                # Corrupt game update response
-                print(f"[*] Corrupted Game update response for: {hostname}{self.path}")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/x-msl+json")
-                self.end_headers()
-                self.wfile.write(b"uwu")
-                return
-
-        # ===== Existing interceptions =====
-        # Netflix corruption
-        if "netflix" in hostname.lower():
-            print(f"[*] Corrupted Netflix response for: {hostname}")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/x-msl+json")
-            self.end_headers()
-            self.wfile.write(b"uwu")
+                logger.info(f"[PKG BLOCKED - no matching CUSA] {url_str}")
+                self.send_injected_response(403, b"Blocked PKG", {})
             return
 
-        # Specific JS injection for error page
-        if "/js/common/config/text/config.text.lruderrorpage" in self.path:
-            inject_path = Path(__file__).parent / "inject_auto_bundle.js"
-            print(f"[*] Injecting JavaScript from: {inject_path}")
-            if inject_path.exists():
-                self._serve_file(inject_path, "application/javascript")
-            else:
-                print(f"[!] ERROR: inject_auto_bundle.js not found")
-                self.send_error(404, "inject_auto_bundle.js not found")
-            return
+        # All other requests to this host: corrupt response
+        self.send_injected_response(
+            200, b"uwu",
+            {"Content-Type": "application/x-msl+json"}
+        )
+        logger.info(f"[*] Corrupted Game update response for: {host}")
 
-        # Specific JS injection for lapse.js
-        if "/js/lapse.js" in self.path:
-            lapse_path = Path(__file__).parent / "payloads" / "lapse.js"
-            print(f"[*] Injecting JavaScript from: {lapse_path}")
-            if lapse_path.exists():
-                self._serve_file(lapse_path, "application/javascript")
-            else:
-                print(f"[!] ERROR: lapse.js not found")
-                self.send_error(404, "lapse.js not found")
-            return
-
-        # Log forwarding
-        if "/_log" in self.path:
-            self._handle_log()
-            return
-
-        # Manifest override
-        if "manifest.json.aes" in self.path:
-            self._serve_manifest()
-            return
-
-        # Local .js files
-        if self.path.endswith(".js"):
-            filename = self.path.split("/")[-1]
-            js_path = Path(__file__).parent / filename
-            if js_path.exists():
-                self._serve_file(js_path, "application/javascript")
-                print(f"[+] Served local JS: {filename}")
-                return
-
-        # Default: forward request
-        self._forward_request()
-
-    def _forward_to_absolute_url(self, url):
-        # Parse the URL to extract host, path, etc.
-        from urllib.parse import urlparse
-        parsed = urlparse(url)
-        new_host = parsed.netloc
-        new_path = parsed.path + ("?" + parsed.query if parsed.query else "")
-
-        # Create a new request to that URL
-        headers = dict(self.headers)
-        headers["Host"] = new_host
-        for h in ["Proxy-Connection", "Connection", "Keep-Alive",
-                  "Proxy-Authenticate", "Proxy-Authorization",
-                  "TE", "Trailer", "Transfer-Encoding", "Upgrade"]:
-            headers.pop(h, None)
-
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len) if content_len > 0 else None
-
-        print(f"[>] Redirect to: {url}")
-
-        try:
-            req = urllib.request.Request(url, data=body, headers=headers, method=self.command)
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                self.send_response(resp.status)
-                for key, val in resp.getheaders():
-                    if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                           "proxy-authorization", "te", "trailer",
-                                           "transfer-encoding", "upgrade"]:
-                        self.send_header(key, val)
-                self.end_headers()
-                while chunk := resp.read(8192):
-                    self.wfile.write(chunk)
-        except urllib.error.HTTPError as e:
-            self.send_response(e.code)
-            for key, val in e.headers.items():
-                if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                       "proxy-authorization", "te", "trailer",
-                                       "transfer-encoding", "upgrade"]:
-                    self.send_header(key, val)
-            self.end_headers()
-            self.wfile.write(e.read())
-        except Exception as e:
-            print(f"[!] Redirect forward error: {e}")
-            self.send_error(502, f"Gateway Error: {e}")
-
-    # ---------- Existing Handlers (unchanged) ----------
-    def _handle_log(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len) if content_len > 0 else b""
-        try:
-            print(f"[PROXY] Log: {body.decode('utf-8', errors='ignore')}")
-        except:
-            print(f"[PROXY] Log (binary): {len(body)} bytes")
-
-        try:
-            req = urllib.request.Request(LOG_SERVER_URL, data=body,
-                                         headers={"Content-Type": "application/json"},
-                                         method="POST")
-            urllib.request.urlopen(req, timeout=2)
-            print("[PROXY] Forwarded to log server")
-        except Exception as e:
-            print(f"[PROXY] Forward failed: {e}")
-
-        self.send_response(200)
-        self.send_header("Content-Type", "text/plain")
+    def send_injected_response(self, code, body_bytes, headers):
+        """Send a custom HTTP response."""
+        self.send_response(code)
+        for k, v in headers.items():
+            self.send_header(k, v)
+        self.send_header("Content-Length", str(len(body_bytes)))
         self.end_headers()
-        self.wfile.write(b"ok")
+        self.wfile.write(body_bytes)
 
-    def _serve_manifest(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-        self.wfile.write(MANIFEST)
-        print("[+] Served manifest override")
-
-    def _serve_file(self, path, content_type):
+    def _forward_request(self, host, parsed_url):
+        """
+        Forward request to upstream server.
+        host: netloc (e.g., example.com:80)
+        parsed_url: urlparse result
+        """
         try:
-            data = path.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", len(data))
-            self.end_headers()
-            self.wfile.write(data)
+            # Split host and port
+            if ":" in host:
+                hostname, port = host.split(":")
+                port = int(port)
+            else:
+                hostname = host
+                port = 80
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(30)
+            sock.connect((hostname, port))
+
+            # Build request line
+            path = parsed_url.path or "/"
+            if parsed_url.query:
+                path += "?" + parsed_url.query
+            request_line = f"{self.command} {path} HTTP/1.1\r\n"
+
+            sock.sendall(request_line.encode())
+            # Send headers (excluding hop-by-hop)
+            for h, v in self.headers.items():
+                if h.lower() not in ("connection", "proxy-connection", "keep-alive"):
+                    sock.sendall(f"{h}: {v}\r\n".encode())
+            sock.sendall(b"\r\n")
+
+            # Send body if present
+            if self.command in ("POST", "PUT") and self.headers.get("Content-Length"):
+                content_len = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(content_len)
+                sock.sendall(body)
+
+            # Read and forward response
+            resp_data = b""
+            while True:
+                chunk = sock.recv(8192)
+                if not chunk:
+                    break
+                resp_data += chunk
+            sock.close()
+
+            self.connection.sendall(resp_data)
         except Exception as e:
-            self.send_error(500, f"File error: {e}")
+            logger.error(f"[!] Forward error: {e}")
+            self.send_error(502, "Bad Gateway")
 
-    def _forward_request(self):
-        host = self.headers.get("Host")
-        if not host:
-            self.send_error(400, "Missing Host header")
-            return
-
-        hostname = host.split(":")[0]
-
-        try:
-            resolved_ip = socket.gethostbyname(hostname)
-        except socket.gaierror as e:
-            print(f"[!] DNS resolution failed for {hostname}: {e}")
-            self.send_error(502, f"DNS resolution failed: {e}")
-            return
-
-        url = f"http://{resolved_ip}{self.path}"
-
-        headers = dict(self.headers)
-        for h in ["Proxy-Connection", "Connection", "Keep-Alive",
-                  "Proxy-Authenticate", "Proxy-Authorization",
-                  "TE", "Trailer", "Transfer-Encoding", "Upgrade"]:
-            headers.pop(h, None)
-        headers["Host"] = host
-
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len) if content_len > 0 else None
-
-        print(f"[>] {self.command} {url} (Host: {host})")
-
-        try:
-            req = urllib.request.Request(url, data=body, headers=headers, method=self.command)
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                self.send_response(resp.status)
-                for key, val in resp.getheaders():
-                    if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                           "proxy-authorization", "te", "trailer",
-                                           "transfer-encoding", "upgrade"]:
-                        self.send_header(key, val)
-                self.end_headers()
-                while chunk := resp.read(8192):
-                    self.wfile.write(chunk)
-        except urllib.error.HTTPError as e:
-            self.send_response(e.code)
-            for key, val in e.headers.items():
-                if key.lower() not in ["connection", "keep-alive", "proxy-authenticate",
-                                       "proxy-authorization", "te", "trailer",
-                                       "transfer-encoding", "upgrade"]:
-                    self.send_header(key, val)
-            self.end_headers()
-            self.wfile.write(e.read())
-        except Exception as e:
-            print(f"[!] Forward error: {e}")
-            self.send_error(502, f"Gateway Error: {e}")
-
-# -------------------- Threaded Server --------------------
-class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    daemon_threads = True
-
-def get_local_ip():
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
-            return s.getsockname()[0]
-    except:
-        return "127.0.0.1"
-
-def get_all_ips():
-    ips = []
-    try:
-        for info in socket.getaddrinfo(socket.gethostname(), None):
-            addr = info[4][0]
-            if addr not in ips and not addr.startswith("127."):
-                ips.append(addr)
-    except:
+    def log_message(self, format, *args):
+        # Suppress default http.server logging (we use our own)
         pass
-    return ips
 
-def main():
-    bind_addresses = [LISTEN_HOST]
-    if LISTEN_HOST != "0.0.0.0":
-        bind_addresses.append("0.0.0.0")
-    bind_addresses.extend([get_local_ip(), "127.0.0.1"])
-    bind_addresses = list(dict.fromkeys(bind_addresses))
-
-    httpd = None
-    for addr in bind_addresses:
-        try:
-            server_address = (addr, LISTEN_PORT)
-            httpd = ThreadedHTTPServer(server_address, ProxyHandler)
-            print(f"[+] Proxy bound to {addr}:{LISTEN_PORT}")
-            break
-        except OSError as e:
-            print(f"[!] Could not bind to {addr}:{LISTEN_PORT} - {e}")
-
-    if httpd is None:
-        print("[!] Failed to bind to any address.")
-        print("    Available IP addresses on this device:")
-        for ip in get_all_ips():
-            print(f"      - {ip}")
-        sys.exit(1)
-
-    client_ip = get_local_ip()
-    print(f"\n[+] Proxy running!")
-    print(f"[+] Configure your PS4 / router / device proxy settings to:")
-    print(f"      Proxy Server: {client_ip}")
-    print(f"      Proxy Port:   {LISTEN_PORT}")
-    print("[+] Press Ctrl+C to stop.\n")
-
+# ------------------------------
+# 4. Auto-detect local IP
+# ------------------------------
+def get_local_ip():
+    """Return primary non-loopback IPv4 address."""
     try:
-        httpd.serve_forever()
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        try:
+            return socket.gethostbyname(socket.gethostname())
+        except:
+            return "127.0.0.1"
+
+# ------------------------------
+# 5. Main entry point
+# ------------------------------
+def main():
+    load_blocked_domains()
+
+    host = "0.0.0.0"
+    port = 8080
+    local_ip = get_local_ip()
+
+    logger.info(f"\n{'='*50}")
+    logger.info(f"Proxy running at http://{local_ip}:{port}")
+    logger.info(f"Set this as HTTP proxy on your device.")
+    logger.info(f"{'='*50}\n")
+
+    server = ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
+    try:
+        server.serve_forever()
     except KeyboardInterrupt:
-        print("\n[!] Shutting down...")
-        httpd.shutdown()
+        logger.info("\n[!] Shutting down...")
+        server.shutdown()
 
 if __name__ == "__main__":
     main()
