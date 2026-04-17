@@ -1,5 +1,5 @@
 """
-iPhone Netflix N Hack port
+Mobile Netflix N Hack port
 
 Ported by MexrlDev
 
