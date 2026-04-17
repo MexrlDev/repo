@@ -13,6 +13,7 @@ import socket
 import threading
 import select
 import ssl
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 import struct
@@ -174,10 +175,15 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             # Consume the peeked data
             _ = self.connection.recv(len(first_data))
 
-            # Connect to remote server
-            remote_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            remote_sock.settimeout(30)
-            remote_sock.connect((host, port))
+            # Connect to remote server with retry on network failure
+            while True:
+                try:
+                    remote_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    remote_sock.settimeout(30)
+                    remote_sock.connect((host, port))
+                    break
+                except socket.error:
+                    time.sleep(1)
 
             # Bidirectional tunnel
             self._tunnel_bidirectional(self.connection, remote_sock)
@@ -313,7 +319,13 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(30)
-            sock.connect((hostname, port))
+            # Retry connection every second until success
+            while True:
+                try:
+                    sock.connect((hostname, port))
+                    break
+                except socket.error:
+                    time.sleep(1)
 
             # Build request line (use absolute URL for proxies if originally absolute)
             if self.path.startswith(('http://', 'https://')):
