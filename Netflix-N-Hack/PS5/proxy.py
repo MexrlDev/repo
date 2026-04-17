@@ -118,6 +118,33 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         # self.connection is the client socket; getsockname() returns (ip, port)
         return self.connection.getsockname()[0].encode("utf-8")
 
+    def _get_destination(self):
+        """
+        Return (hostname, port, path, scheme) for the upstream server.
+        Handles both absolute (proxy-style) and relative (origin-style) URLs.
+        """
+        if self.path.startswith(('http://', 'https://')):
+            parsed = urlparse(self.path)
+            hostname = parsed.hostname
+            port = parsed.port or (443 if parsed.scheme == 'https' else 80)
+            path = parsed.path or '/'
+            if parsed.query:
+                path += '?' + parsed.query
+            return hostname, port, path, parsed.scheme
+        else:
+            host = self.headers.get('Host', '')
+            if not host:
+                raise ValueError("Missing Host header")
+            if ':' in host:
+                hostname, port = host.split(':', 1)
+                port = int(port)
+            else:
+                hostname = host
+                port = 80
+            path = self.path
+            scheme = 'https' if port == 443 else 'http'
+            return hostname, port, path, scheme
+
     def do_CONNECT(self):
         """Handle CONNECT method for HTTPS tunneling with SNI blocking."""
         host, port = self.path.split(":")
@@ -198,31 +225,30 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _handle_request(self):
         """Process HTTP request and optionally inject response."""
-        parsed = urlparse(self.path)
-        host = self.headers.get("Host", "")
-        if not host:
+        try:
+            hostname, port, path, scheme = self._get_destination()
+        except ValueError:
             self.send_error(400, "Missing Host header")
             return
 
-        print(f"[*] {self.command} {host}{parsed.path}")
+        print(f"[*] {self.command} {scheme}://{hostname}:{port}{path}")
 
         # Block by domain
-        if is_blocked(host):
+        if is_blocked(hostname):
             self.send_injected_response(404, b"uwu", {})
-            print(f"[*] Blocked HTTP request to: {host}")
+            print(f"[*] Blocked HTTP request to: {hostname}")
             return
 
         # Netflix corruption
-        if "netflix" in host:
+        if "netflix" in hostname:
             self.send_injected_response(
                 200, b"uwu",
                 {"Content-Type": "application/x-msl+json"}
             )
-            print(f"[*] Corrupted Netflix response for: {host}")
+            print(f"[*] Corrupted Netflix response for: {hostname}")
             return
 
         # --- Injection paths ---
-        path = parsed.path
         script_dir = os.path.dirname(os.path.abspath(__file__))
         proxy_ip = self.get_proxy_ip()
 
@@ -283,22 +309,17 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def _forward_request(self):
         """Forward request to upstream server and relay response."""
         try:
-            parsed = urlparse(self.path)
-            host = self.headers.get("Host")
-            port = 80
-            if ":" in host:
-                host, port = host.split(":")
-                port = int(port)
+            hostname, port, path, scheme = self._get_destination()
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(30)
-            sock.connect((host, port))
+            sock.connect((hostname, port))
 
-            # Build request line
-            path = parsed.path or "/"
-            if parsed.query:
-                path += "?" + parsed.query
-            request_line = f"{self.command} {path} HTTP/1.1\r\n"
+            # Build request line (use absolute URL for proxies if originally absolute)
+            if self.path.startswith(('http://', 'https://')):
+                request_line = f"{self.command} {self.path} HTTP/1.1\r\n"
+            else:
+                request_line = f"{self.command} {path} HTTP/1.1\r\n"
 
             sock.sendall(request_line.encode())
             for h, v in self.headers.items():
