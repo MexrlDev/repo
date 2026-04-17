@@ -1,2 +1,2 @@
 # repo
-A source cydia for iPhones, this is a source.
+* I will be posting other projects here like the projects i worked on that doesnt have a repo  
