@@ -180,6 +180,33 @@ def handle_tunnel(client_sock, client_addr):
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     timeout = 30
 
+    def _get_destination(self):
+        """
+        Return (hostname, port, path, scheme) for the upstream server.
+        Handles both absolute (proxy-style) and relative (origin-style) URLs.
+        """
+        if self.path.startswith(('http://', 'https://')):
+            parsed = urlparse(self.path)
+            hostname = parsed.hostname
+            port = parsed.port or (443 if parsed.scheme == 'https' else 80)
+            path = parsed.path or '/'
+            if parsed.query:
+                path += '?' + parsed.query
+            return hostname, port, path, parsed.scheme
+        else:
+            host = self.headers.get('Host', '')
+            if not host:
+                raise ValueError("Missing Host header")
+            if ':' in host:
+                hostname, port = host.split(':', 1)
+                port = int(port)
+            else:
+                hostname = host
+                port = 80
+            path = self.path
+            scheme = 'https' if port == 443 else 'http'
+            return hostname, port, path, scheme
+
     def do_CONNECT(self):
         # Parse host:port from path
         host, port = self.path.split(":")
@@ -258,32 +285,30 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _handle_request(self):
         """Process HTTP request and optionally inject response."""
-        # Parse URL
-        parsed = urlparse(self.path)
-        host = self.headers.get("Host", "")
-        if not host:
+        try:
+            hostname, port, path, scheme = self._get_destination()
+        except ValueError:
             self.send_error(400, "Missing Host header")
             return
 
-        print(f"[*] {self.command} {host}{parsed.path}")
+        print(f"[*] {self.command} {scheme}://{hostname}:{port}{path}")
 
         # Check blacklist
-        if is_blocked(host):
+        if is_blocked(hostname):
             self.send_injected_response(404, b"Blocked", {"Content-Type": "text/plain"})
-            print(f"[*] BLOCKED HTTP: {host}")
+            print(f"[*] BLOCKED HTTP: {hostname}")
             return
 
         # Special handling for Netflix
-        if "netflix" in host:
+        if "netflix" in hostname:
             self.send_injected_response(
                 200, b"uwu",
                 {"Content-Type": "application/x-msl+json"}
             )
-            print(f"[*] Corrupted Netflix: {host}")
+            print(f"[*] Corrupted Netflix: {hostname}")
             return
 
         # Injection paths
-        path = parsed.path
         if "/js/common/config/text/config.text.lruderrorpage" in path:
             inject_file = os.path.join(os.path.dirname(__file__), "inject_auto_bundle.js")
             self._inject_file(inject_file, "inject_auto_bundle.js")
@@ -324,24 +349,18 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def _forward_request(self):
         """Forward request to upstream server and relay response."""
         try:
-            # Prepare upstream request
-            parsed = urlparse(self.path)
-            host = self.headers.get("Host")
-            port = 80
-            if ":" in host:
-                host, port = host.split(":")
-                port = int(port)
+            hostname, port, path, scheme = self._get_destination()
 
             # Create socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(30)
-            sock.connect((host, port))
+            sock.connect((hostname, port))
 
-            # Build request line
-            path = parsed.path or "/"
-            if parsed.query:
-                path += "?" + parsed.query
-            request_line = f"{self.command} {path} HTTP/1.1\r\n"
+            # Build request line (use absolute URL if originally absolute)
+            if self.path.startswith(('http://', 'https://')):
+                request_line = f"{self.command} {self.path} HTTP/1.1\r\n"
+            else:
+                request_line = f"{self.command} {path} HTTP/1.1\r\n"
 
             # Send headers (excluding hop-by-hop)
             sock.sendall(request_line.encode())
