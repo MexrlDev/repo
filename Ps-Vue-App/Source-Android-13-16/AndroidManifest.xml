@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:compileSdkVersion="35"
+    android:compileSdkVersionCodename="15"
+    android:versionCode="29"
+    android:versionName="1.0.0"
+    package="com.snei.vue.android">
+
+    <!-- Target Android 13+ (API 33+) -->
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="35" />
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Required for notifications on Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Custom permission for C2D messaging -->
+    <permission
+        android:name="com.snei.vue.android.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.snei.vue.android.permission.C2D_MESSAGE" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!-- Queries for package visibility (Android 11+) -->
+    <queries>
+        <!-- For Chromecast / Google Cast discovery -->
+        <intent>
+            <action android:name="com.google.android.gms.cast.framework.action.START_CAST_SESSION" />
+        </intent>
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:name="com.snei.vue.VueApp"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+
+        <!-- Main launcher activity -->
+        <activity
+            android:name="com.snei.vue.ui.WebViewActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.snei.vue.ui.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:exported="false" />
+
+        <!-- Google API activity -->
+        <activity
+            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Cast & media services -->
+        <service
+            android:name="com.snei.vue.cast.notification.CastNotificationService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <service
+            android:name="com.snei.vue.cast.reconnection.ReconnectionService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <!-- Chromium sandboxed processes -->
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService0"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process0" />
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService1"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process1" />
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService2"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process2" />
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService3"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process3" />
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService4"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process4" />
+        <service
+            android:name="org.chromium.content.app.SandboxedProcessService5"
+            android:exported="false"
+            android:permission="org.chromium.content_shell.permission.SANDBOX"
+            android:process=":sandboxed_process5" />
+
+        <!-- Video Intent Receiver -->
+        <receiver
+            android:name="com.snei.vue.cast.remotecontrol.VideoIntentReceiver"
+            android:exported="false" />
+
+        <!-- Google Analytics -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.CampaignTrackingService"
+            android:exported="false" />
+
+        <!-- Fabric / Crashlytics (deprecated, consider migrating to Firebase Crashlytics) -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="fe6e7557bbb3d7281b64c07ed98721561932642c" />
+
+        <!-- Google Play services version -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- Firebase Init Provider -->
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="com.snei.vue.android.firebaseinitprovider"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <!-- Firebase Measurement -->
+        <receiver
+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Firebase Cloud Messaging (FCM) -->
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.snei.vue.android" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Internal receiver (no intent-filter, so exported="false") -->
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver"
+            android:exported="false" />
+
+        <!-- Legacy Firebase Instance ID service (still required for older devices) -->
+        <service
+            android:name="com.google.firebase.iid.FirebaseInstanceIdService"
+            android:exported="true">
+            <intent-filter android:priority="-500">
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>
