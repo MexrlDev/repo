@@ -648,6 +648,4 @@ Test automation library ttrlibs.js MiniMePlayer, sceneCapture, scenediff, simone
 
 9. Conclusion
 
-The Netflix PS4 NRDP environment is an incredibly powerful platform for building native‑like applications, games, and diagnostic tools.  By combining the raw nrdp.gibbon API, the rich view framework from error.js, and the automation powerhouse of ttrlibs.js, one can achieve virtually any graphical or media experience that the hardware supports—all while running inside the official Netflix application.
-
-This report has covered every detail from the smallest widget property to the overarching application architecture.  With this knowledge, you are fully equipped to write, deploy, and debug your own NRDP‑based software.
+The Netflix PS4 NRDP environment is an incredibly powerful platform for building native‑like applications, games, and diagnostic tools.  By combining the raw nrdp.gibbon API, the rich view framework from *.js, and the automation powerhouse of *.js, one can achieve virtually any graphical or media experience that the hardware supports—all while running inside the official Netflix application.
