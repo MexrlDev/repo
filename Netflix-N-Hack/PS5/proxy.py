@@ -1,33 +1,56 @@
 #!/usr/bin/env python3
 """
-Netflix-N-Hack Phone-Port
-
-Original by Earthonion
+Netflix-N-Hack Mobile Port PS5
 
 Ported by MexrlDev
+
+Original by earthonion
 """
 
 import os
 import sys
 import socket
-import threading
+import struct
+import time
 import select
 import ssl
-import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
-import struct
 
-# ------------------------------
-# 1. Blocklist loading (hosts.txt)
-# ------------------------------
-BLOCKED_DOMAINS = set()
+# ============================================================
+# CONFIGURATION
+# ============================================================
 
-def load_blocked_domains():
-    """Load domains from hosts.txt (same directory as script)."""
+MAIN_PAYLOAD_FILE = "inject_elfldr_automated.js" # Inject file name
+
+SECONDARY_PAYLOAD_FILE = "lapse.js" # Payload name sended with the injection. - (replace with "Snake.py" for the snake game i made)
+
+# Path pattern that triggers the main injection.
+# whenever this substring appears in the request path.
+MAIN_INJECT_PATH_TRIGGER = "/js/common/config/text/config.text.lruderrorpage"
+
+# ============================================================
+# 1. Blocklist management (hosts.txt)
+# ============================================================
+BLOCKED_DOMAINS: set[str] = set()
+
+def load_blocked_domains() -> None:
     global BLOCKED_DOMAINS
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    hosts_path = os.path.join(script_dir, "hosts.txt")
+    candidates = [
+        os.path.join(script_dir, "hosts.txt"),
+        os.path.join(script_dir, "..", "hosts.txt"),
+    ]
+    hosts_path = None
+    for p in candidates:
+        if os.path.exists(p):
+            hosts_path = p
+            break
+
+    if not hosts_path:
+        print(f"[!] hosts.txt not found. Tried: {candidates}")
+        print("[!] Continuing without blocking list.")
+        return
 
     try:
         with open(hosts_path, "r", encoding="utf-8", errors="ignore") as f:
@@ -35,60 +58,59 @@ def load_blocked_domains():
                 line = line.strip()
                 if not line or line.startswith("#"):
                     continue
+                # Format: "0.0.0.0 example.com" or just "example.com"
                 parts = line.split()
                 domain = parts[-1] if parts else line
                 BLOCKED_DOMAINS.add(domain.lower())
         print(f"[+] Loaded {len(BLOCKED_DOMAINS)} blocked domains from {hosts_path}")
-    except FileNotFoundError:
-        print(f"[!] WARNING: hosts.txt not found at {hosts_path}")
     except Exception as e:
         print(f"[!] ERROR loading hosts.txt: {e}")
 
 def is_blocked(hostname: str) -> bool:
-    """Check if hostname matches any blocked domain."""
+    """Return True if hostname matches any blocked domain."""
     hostname_lower = hostname.lower()
-    for blocked in BLOCKED_DOMAINS:
-        if blocked in hostname_lower:
-            return True
-    return False
+    return any(blocked in hostname_lower for blocked in BLOCKED_DOMAINS)
 
-# ------------------------------
-# 2. TLS SNI parser (for CONNECT blocking)
-# ------------------------------
+# ============================================================
+# 2. TLS SNI parser
+# ============================================================
 def extract_sni_from_client_hello(data: bytes) -> str | None:
-    """Parse SNI extension from TLS ClientHello. Returns hostname or None."""
     try:
-        if len(data) < 5 or data[0] != 0x16:
+        if len(data) < 5 or data[0] != 0x16:          # TLS handshake
             return None
+
         record_len = int.from_bytes(data[3:5], 'big')
         if len(data) < 5 + record_len:
             return None
 
-        handshake = data[5:5+record_len]
-        if handshake[0] != 0x01:
+        handshake = data[5:5 + record_len]
+        if handshake[0] != 0x01:                      # ClientHello
             return None
 
-        pos = 1 + 3  # skip type + length
-        pos += 2     # client_version
-        pos += 32    # random
+        pos = 1 + 3                                   # skip message type + length
+        pos += 2                                      # client_version
+        pos += 32                                     # random
         sess_id_len = handshake[pos]
         pos += 1 + sess_id_len
+        # cipher suites
         cs_len = int.from_bytes(handshake[pos:pos+2], 'big')
         pos += 2 + cs_len
+        # compression methods
         comp_len = handshake[pos]
         pos += 1 + comp_len
 
+        # Extensions
         if pos + 2 > len(handshake):
             return None
-        ext_len = int.from_bytes(handshake[pos:pos+2], 'big')
+        ext_total_len = int.from_bytes(handshake[pos:pos+2], 'big')
         pos += 2
-        end_ext = pos + ext_len
+        end_ext = pos + ext_total_len
 
         while pos + 4 <= end_ext:
             ext_type = int.from_bytes(handshake[pos:pos+2], 'big')
             ext_len = int.from_bytes(handshake[pos+2:pos+4], 'big')
             pos += 4
-            if ext_type == 0x0000:  # server_name
+            if ext_type == 0x0000:                    # server_name
                 if pos + 2 > end_ext:
                     break
                 list_len = int.from_bytes(handshake[pos:pos+2], 'big')
@@ -98,7 +120,7 @@ def extract_sni_from_client_hello(data: bytes) -> str | None:
                 name_type = handshake[pos]
                 name_len = int.from_bytes(handshake[pos+1:pos+3], 'big')
                 pos += 3
-                if name_type == 0x00:
+                if name_type == 0x00:                 # host_name
                     host_bytes = handshake[pos:pos+name_len]
                     return host_bytes.decode('utf-8', errors='ignore')
                 pos += name_len
@@ -108,22 +130,13 @@ def extract_sni_from_client_hello(data: bytes) -> str | None:
     except Exception:
         return None
 
-# ------------------------------
-# 3. Custom HTTP Proxy Handler
-# ------------------------------
+# ============================================================
+# 3. HTTP Proxy Request Handler
+# ============================================================
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     timeout = 30
 
-    def get_proxy_ip(self) -> bytes:
-        """Return the IP address the client connected to (as bytes)."""
-        # self.connection is the client socket; getsockname() returns (ip, port)
-        return self.connection.getsockname()[0].encode("utf-8")
-
-    def _get_destination(self):
-        """
-        Return (hostname, port, path, scheme) for the upstream server.
-        Handles both absolute (proxy-style) and relative (origin-style) URLs.
-        """
+    def _get_destination(self) -> tuple[str, int, str, str]:
         if self.path.startswith(('http://', 'https://')):
             parsed = urlparse(self.path)
             hostname = parsed.hostname
@@ -137,8 +150,8 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             if not host:
                 raise ValueError("Missing Host header")
             if ':' in host:
-                hostname, port = host.split(':', 1)
-                port = int(port)
+                hostname, port_str = host.split(':', 1)
+                port = int(port_str)
             else:
                 hostname = host
                 port = 80
@@ -146,13 +159,12 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             scheme = 'https' if port == 443 else 'http'
             return hostname, port, path, scheme
 
-    def do_CONNECT(self):
-        """Handle CONNECT method for HTTPS tunneling with SNI blocking."""
-        host, port = self.path.split(":")
-        port = int(port)
-
-        # Peek first TLS packet to extract SNI
+    # ---------- CONNECT (HTTPS tunneling) ----------
+    def do_CONNECT(self) -> None:
+        host, port_str = self.path.split(":")
+        port = int(port_str)
         self.connection.settimeout(5)
+
         try:
             first_data = self.connection.recv(4096, socket.MSG_PEEK)
         except socket.timeout:
@@ -164,73 +176,73 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         if sni and is_blocked(sni):
             self.send_error(403, f"Blocked: {sni}")
-            print(f"[*] Blocked HTTPS connection to: {sni}")
+            print(f"[*] BLOCKED HTTPS: {sni}")
             return
 
-        # Send 200 Connection Established
         self.send_response(200, "Connection Established")
         self.end_headers()
 
         try:
-            # Consume the peeked data
             _ = self.connection.recv(len(first_data))
-
-            # Connect to remote server with retry on network failure
-            while True:
-                try:
-                    remote_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    remote_sock.settimeout(30)
-                    remote_sock.connect((host, port))
-                    break
-                except socket.error:
-                    time.sleep(1)
-
-            # Bidirectional tunnel
-            self._tunnel_bidirectional(self.connection, remote_sock)
+            remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            remote.settimeout(30)
+            remote.connect((host, port))
+            self._tunnel_bidirectional(self.connection, remote)
         except Exception as e:
             print(f"[!] Tunnel failed for {host}:{port}: {e}")
         finally:
             self.connection.close()
 
-    def _tunnel_bidirectional(self, client_sock, remote_sock):
-        """Forward data between client and remote."""
+    def _tunnel_bidirectional(self, client: socket.socket, remote: socket.socket) -> None:
         try:
-            client_sock.settimeout(0.1)
-            remote_sock.settimeout(0.1)
+            client.settimeout(0.1)
+            remote.settimeout(0.1)
             while True:
-                rlist, _, _ = select.select([client_sock, remote_sock], [], [], 1)
-                if client_sock in rlist:
-                    data = client_sock.recv(8192)
+                rlist, _, _ = select.select([client, remote], [], [], 1)
+                if client in rlist:
+                    data = client.recv(8192)
                     if not data:
                         break
-                    remote_sock.sendall(data)
-                if remote_sock in rlist:
-                    data = remote_sock.recv(8192)
+                    remote.sendall(data)
+                if remote in rlist:
+                    data = remote.recv(8192)
                     if not data:
                         break
-                    client_sock.sendall(data)
+                    client.sendall(data)
         except Exception:
             pass
         finally:
-            remote_sock.close()
+            remote.close()
 
-    def do_GET(self):
-        self._handle_request()
+    # ---------- HTTP methods ----------
+    def do_GET(self) -> None:    self._handle_request()
+    def do_POST(self) -> None:   self._handle_request()
+    def do_HEAD(self) -> None:   self._handle_request()
+    def do_PUT(self) -> None:    self._handle_request()
+    def do_DELETE(self) -> None: self._handle_request()
 
-    def do_POST(self):
-        self._handle_request()
+    def _get_payload_content(self, filename: str) -> bytes:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        candidates = [
+            os.path.join(os.curdir, filename),
+            os.path.join(script_dir, filename),
+            os.path.join(script_dir, "payloads", filename),
+        ]
+        for path in candidates:
+            if os.path.isfile(path):
+                try:
+                    with open(path, "rb") as f:
+                        print(f"[*] Found {filename} at {path}")
+                        return f.read()
+                except Exception as e:
+                    print(f"[!] Error reading {path}: {e}")
+        return b""
 
-    def do_HEAD(self):
-        self._handle_request()
+    def _inject_ip_placeholder(self, content: bytes) -> bytes:
+        proxy_ip = self.connection.getsockname()[0].encode("utf-8")
+        return content.replace(b"PLS_STOP_HARDCODING_IPS", proxy_ip)
 
-    def do_PUT(self):
-        self._handle_request()
-
-    def do_DELETE(self):
-        self._handle_request()
-
-    def _handle_request(self):
-        """Process HTTP request and optionally inject response."""
+    def _handle_request(self) -> None:
         try:
             hostname, port, path, scheme = self._get_destination()
         except ValueError:
@@ -239,95 +251,81 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         print(f"[*] {self.command} {scheme}://{hostname}:{port}{path}")
 
-        # Block by domain
+        # 1. Blocklist check
         if is_blocked(hostname):
-            self.send_injected_response(404, b"uwu", {})
-            print(f"[*] Blocked HTTP request to: {hostname}")
+            self.send_injected_response(404, b"Blocked", {"Content-Type": "text/plain"})
+            print(f"[*] BLOCKED HTTP: {hostname}")
             return
 
-        # Netflix corruption
+        # 2. Main injection trigger (Netflix error page)
+        if MAIN_INJECT_PATH_TRIGGER in path:
+            main_content = self._get_payload_content(MAIN_PAYLOAD_FILE)
+            if not main_content:
+                self.send_injected_response(404, f"{MAIN_PAYLOAD_FILE} not found".encode(),
+                                            {"Content-Type": "text/plain"})
+                print(f"[!] Missing {MAIN_PAYLOAD_FILE}")
+                return
+
+            # Merge secondary payload if it exists
+            secondary_content = self._get_payload_content(SECONDARY_PAYLOAD_FILE)
+            if secondary_content:
+                combined = main_content + b"\n\n" + secondary_content
+                total = len(main_content) + len(secondary_content)
+                print(f"[+] Serving combined payload: {MAIN_PAYLOAD_FILE} + {SECONDARY_PAYLOAD_FILE} ({total} bytes)")
+            else:
+                combined = main_content
+                print(f"[+] Serving main payload only: {MAIN_PAYLOAD_FILE} ({len(main_content)} bytes) – {SECONDARY_PAYLOAD_FILE} not found")
+
+            # Replace hardcoded IPs in JavaScript payloads
+            if combined.startswith(b"//") or combined.startswith(b"/*") or b"function" in combined.lower():
+                combined = self._inject_ip_placeholder(combined)
+
+            self.send_injected_response(200, combined,
+                                        {"Content-Type": "application/javascript"})
+            return
+
+        # 3. Direct request for secondary payload (backup)
+        if path.rstrip("/").endswith("/" + SECONDARY_PAYLOAD_FILE) or \
+           "/payloads/" + SECONDARY_PAYLOAD_FILE in path:
+            content = self._get_payload_content(SECONDARY_PAYLOAD_FILE)
+            if content:
+                content = self._inject_ip_placeholder(content)
+                self.send_injected_response(200, content,
+                                            {"Content-Type": "application/javascript"})
+                print(f"[+] Injected {SECONDARY_PAYLOAD_FILE} ({len(content)} bytes) from direct request")
+            else:
+                self.send_injected_response(404, f"{SECONDARY_PAYLOAD_FILE} not found".encode(),
+                                            {"Content-Type": "text/plain"})
+                print(f"[!] {SECONDARY_PAYLOAD_FILE} not found for direct request")
+            return
+
+        # 4. Netflix MSL corruption (only for other Netflix paths)
         if "netflix" in hostname:
-            self.send_injected_response(
-                200, b"uwu",
-                {"Content-Type": "application/x-msl+json"}
-            )
-            print(f"[*] Corrupted Netflix response for: {hostname}")
+            self.send_injected_response(200, b"uwu",
+                                        {"Content-Type": "application/x-msl+json"})
+            print(f"[*] Corrupted Netflix: {hostname}")
             return
 
-        # --- Injection paths ---
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        proxy_ip = self.get_proxy_ip()
-
-        # Path 1: lruderrorpage -> inject_elfldr_automated.js
-        if "/js/common/config/text/config.text.lruderrorpage" in path:
-            inject_file = os.path.join(script_dir, "inject_elfldr_automated.js")
-            self._inject_file_with_ip(inject_file, proxy_ip, "inject_elfldr_automated.js")
-            return
-
-        # Path 2: lapse.js
-        if "/js/lapse.js" in path:
-            inject_file = os.path.join(script_dir, "payloads", "lapse.js")
-            self._inject_file_with_ip(inject_file, proxy_ip, "lapse.js")
-            return
-
-        # Path 3: elf_loader.js
-        if "/js/elf_loader.js" in path:
-            inject_file = os.path.join(script_dir, "payloads", "elf_loader.js")
-            self._inject_file_with_ip(inject_file, proxy_ip, "elf_loader.js")
-            return
-
-        # Path 4: elfldr.elf
-        if "/js/elfldr.elf" in path:
-            inject_file = os.path.join(script_dir, "payloads", "elfldr.elf")
-            self._inject_file_with_ip(inject_file, proxy_ip, "elfldr.elf", is_binary=True)
-            return
-
-        # Path 5: PS4 inject_auto_bundle.js
-        if "/js/ps4/inject_auto_bundle.js" in path:
-            inject_file = os.path.join(script_dir, "PS4", "inject_auto_bundle.js")
-            self._inject_file_with_ip(inject_file, proxy_ip, "PS4/inject_auto_bundle.js")
-            return
-
-        # Default: forward to real server
+        # 5. Normal forward
         self._forward_request()
 
-    def _inject_file_with_ip(self, filepath, proxy_ip, desc, is_binary=False):
-        try:
-            with open(filepath, "rb") as f:
-                content = f.read()
-            content = content.replace(b"PLS_STOP_HARDCODING_IPS", proxy_ip)
-            print(f"[+] Loaded {len(content)} bytes from {desc}")
-            self.send_injected_response(200, content, {"Content-Type": "application/javascript"})
-        except FileNotFoundError:
-            error_msg = f"File not found: {desc}".encode()
-            self.send_injected_response(404, error_msg, {"Content-Type": "text/plain"})
-            print(f"[!] ERROR: {desc} not found at {filepath}")
-
-    def send_injected_response(self, code, body_bytes, headers):
-        """Send a custom HTTP response."""
+    def send_injected_response(self, code: int, body: bytes,
+                               headers: dict[str, str]) -> None:
         self.send_response(code)
         for k, v in headers.items():
             self.send_header(k, v)
-        self.send_header("Content-Length", str(len(body_bytes)))
+        self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body_bytes)
+        self.wfile.write(body)
 
-    def _forward_request(self):
-        """Forward request to upstream server and relay response."""
+    def _forward_request(self) -> None:
         try:
             hostname, port, path, scheme = self._get_destination()
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(30)
-            # Retry connection every second until success
-            while True:
-                try:
-                    sock.connect((hostname, port))
-                    break
-                except socket.error:
-                    time.sleep(1)
+            sock.connect((hostname, port))
 
-            # Build request line (use absolute URL for proxies if originally absolute)
             if self.path.startswith(('http://', 'https://')):
                 request_line = f"{self.command} {self.path} HTTP/1.1\r\n"
             else:
@@ -339,35 +337,31 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                     sock.sendall(f"{h}: {v}\r\n".encode())
             sock.sendall(b"\r\n")
 
-            # Send body if present
             if self.command in ("POST", "PUT") and self.headers.get("Content-Length"):
                 content_len = int(self.headers.get("Content-Length", 0))
                 body = self.rfile.read(content_len)
                 sock.sendall(body)
 
-            # Read and forward response
-            resp_data = b""
+            response = b""
             while True:
                 chunk = sock.recv(8192)
                 if not chunk:
                     break
-                resp_data += chunk
+                response += chunk
             sock.close()
-
-            self.connection.sendall(resp_data)
+            self.connection.sendall(response)
         except Exception as e:
             print(f"[!] Forward error: {e}")
             self.send_error(502, "Bad Gateway")
 
     def log_message(self, format, *args):
-        # Suppress default logging
         pass
 
-# ------------------------------
-# 4. Auto-detect local IP
-# ------------------------------
-def get_local_ip():
-    """Return primary non-loopback IPv4 address."""
+
+# ============================================================
+# 4. Utility: local IP detection
+# ============================================================
+def get_local_ip() -> str:
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.settimeout(0)
@@ -381,10 +375,11 @@ def get_local_ip():
         except:
             return "127.0.0.1"
 
-# ------------------------------
+
+# ============================================================
 # 5. Main entry point
-# ------------------------------
-def main():
+# ============================================================
+def main() -> None:
     load_blocked_domains()
 
     host = "0.0.0.0"
@@ -392,8 +387,11 @@ def main():
     local_ip = get_local_ip()
 
     print(f"\n{'='*50}")
-    print(f"Proxy running at http://{local_ip}:{port}")
-    print(f"Set this as HTTP proxy on your device.")
+    print(f"Netflix-n-Hack Mobile Proxy – PS5 Edition")
+    print(f"Main payload : {MAIN_PAYLOAD_FILE}")
+    print(f"Secondary    : {SECONDARY_PAYLOAD_FILE}")
+    print(f"Listening on {local_ip} : {port}")
+    print(f"Set this as your PlayStation proxy.")
     print(f"{'='*50}\n")
 
     server = ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
