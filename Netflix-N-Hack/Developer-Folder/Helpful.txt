@@ -1,1 +1,165 @@
+Netflix PS4 NRDP Development Guide
 
+This is a consolidated write-up of what i figured out while digging into the Netflix PS4 app and its NRDP environment. It covers how the runtime behaves, how UI actually works, input handling, and the practical patterns you need if you’re building anything (tools, games, or exploit interfaces).
+
+⸻
+
+1. JavaScript Environment
+
+The Netflix app runs on NRDP (Netflix Rich Development Platform), which is essentially a custom runtime built on top of V8. From testing, it behaves roughly like a Chrome ~80-era engine.
+
+You get solid ES5 support and a fair amount of ES6 features—things like let, const, arrow functions, Promise, Map, BigInt, and typed arrays all work as expected.
+
+What you don’t get is just as important: there’s no DOM, no document, no window in the usual browser sense. Everything goes through the nrdp.gibbon API instead.
+
+Timers are available, but namespaced:
+
+* nrdp.setTimeout
+* nrdp.setInterval
+* nrdp.clearTimeout
+* nrdp.clearInterval
+
+If you’re working on exploits, the environment also supports the usual memory primitives (ArrayBuffer, DataView, BigUint64Array, etc.), which is how kernel-level access is eventually achieved. But for UI or game logic, you can ignore all of that and just stay within NRDP.
+
+⸻
+
+2. UI System (Widgets)
+
+There’s no HTML or layout engine. Everything you see on screen is a widget created through nrdp.gibbon.makeWidget().
+
+A minimal example looks like this:
+
+var myWidget = nrdp.gibbon.makeWidget();
+myWidget.x = 100;
+myWidget.y = 200;
+myWidget.width = 300;
+myWidget.height = 50;
+myWidget.color = { r: 255, g: 0, b: 0, a: 255 }; // red
+myWidget.text = "Hello World";
+myWidget.textStyle = {
+    size: 24,
+    color: { r: 255, g: 255, b: 255 }
+};
+myWidget.parent = someParentWidget;
+
+A few properties you’ll use constantly:
+
+* x, y: top-left position
+* width, height: size in pixels
+* color: background RGBA
+* text: displayed string
+* textStyle: font size, color, alignment, wrapping
+* parent: attaches it to another widget (or leave null for root)
+* visible: toggle rendering
+* borderColor, borderWidth: optional styling
+
+Nothing renders until you attach a root widget to the scene:
+
+nrdp.gibbon.scene.widget = myRootWidget;
+
+In practice, most people just create a full-screen root (1920×1080) and build everything under it.
+
+⸻
+
+3. Input Handling
+
+The only input method that consistently works across builds is the native key event listener:
+
+nrdp.gibbon.addEventListener('key', function(event) {
+    if (event.data.type !== 'press') return;
+    var ui = event.data.uiEvent;
+    if (ui === 'key.up') {}
+    if (ui === 'key.down') {}
+    if (ui === 'key.left') {}
+    if (ui === 'key.right') {}
+    if (ui === 'key.enter') {} // Cross (X)
+    if (ui === 'key.back') {}  // Circle (O)
+});
+
+There are numeric key codes available via event.data.code, but the uiEvent strings are much cleaner and more reliable.
+
+Known mappings:
+
+* D-pad → key.up, key.down, key.left, key.right
+* Cross (X) → key.enter
+* Circle (O) → key.back
+* Triangle → likely key.escape
+* Square → likely key.context1
+
+One important note: jsmaf.onkeydown shows up in some older examples, but it’s inconsistent and sometimes missing entirely. It’s not worth relying on—just use the native listener.
+
+⸻
+
+4. Timers and Game Loops
+
+Timing behaves exactly how you’d expect, just under the nrdp namespace.
+
+var loop = nrdp.setInterval(function() {
+    // update logic
+}, 150);
+// stop it later
+nrdp.clearInterval(loop);
+
+For one-off delays, nrdp.setTimeout works the same way.
+
+This is typically how you drive game loops or animations.
+
+⸻
+
+5. Loading External Scripts
+
+You can pull in external code using nrdp.gibbon.load:
+
+nrdp.gibbon.load({
+    url: 'http://yourserver.com/payload.js',
+    secure: false
+}, function(result) {
+    if (result.data) {
+        eval(result.data);
+    }
+});
+
+This is the same mechanism used by multi-stage exploits (e.g., loading dumpers or FTP payloads). It’s straightforward, but obviously you’re responsible for whatever you execute.
+
+⸻
+
+6. Simulating Input (For Testing)
+
+There’s a built-in way to fake controller input through the console:
+
+nrdp.gibbon._runConsole('/key right 1 1000');
+
+That example simulates holding “right” for one second. It’s surprisingly useful when you’re testing movement logic or UI navigation without constantly using a controller.
+
+⸻
+
+7. Example: Snake Game (How It All Fits Together)
+
+The Snake implementation is a good reference because it touches almost every part of the system:
+
+* A full-screen root widget acts as the scene
+* Score is just a text widget updated dynamically
+* Game-over text is another widget, toggled on death
+* The snake itself is an array of small square widgets that get repositioned every tick
+* The loop runs via nrdp.setInterval
+* Input comes from addEventListener('key', ...)
+* Restart logic hooks into the same input system
+
+One interesting trick: to exit cleanly, the script just throws an error:
+
+throw new Error('Exit');
+
+That forces Netflix to display its error screen, which effectively kills the script.
+
+⸻
+
+8. Practical Takeaways
+
+A few things that save time once you know them:
+
+* Don’t use jsmaf.onkeydown—it’s unreliable
+* All UI is widget-based; there’s no HTML layer at all
+* Nothing renders until you assign nrdp.gibbon.scene.widget
+* nrdp.setInterval is your main loop tool
+* Throwing an error is the simplest way to exit
+* The built-in Netflix test files are extremely useful references (especially things like Breakout and key event tests)
