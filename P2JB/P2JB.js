@@ -5,8 +5,6 @@
  *
  * Jsmaf ported (version BETA)
  *
- * PS4 ≤ 13.00 / PS5 ≤ 12.70
- *
  * Exploits a missing crfree() in sys_kqueueex to underflow the ucred
  * reference count, then uses a double‑free to gain kernel r/w and escape.
  *
