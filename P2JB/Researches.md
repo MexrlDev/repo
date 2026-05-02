@@ -124,9 +124,3 @@
 · .6 Impact and mitigation
   The impact is straightforward: if fully exploited, the bug can lead to kernel-mode code execution and full control of the console.
   The fix is also straightforward: make sure the cleanup path always balances the credential reference, including the error branch. In practice, that means releasing the stored ucred before leaving the failing sys_kqueueex path. Sony’s PS5 13.00 patch appears to do exactly that.
-
----
-
-· .7 Conclusion
-  P2JB is a good example of how a small credential accounting bug can become serious. On its own, the flaw looks like a reference leak. With enough control over timing, heap state, and file descriptors, it can be pushed into a much more dangerous condition and used as a starting point for full kernel exploitation.
-  The PoC only shows the first stage, but the overall chain is a textbook example of turning a subtle kernel bookkeeping mistake into a jailbreak path.
