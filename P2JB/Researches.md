@@ -1,4 +1,4 @@
-# P2JB (Patience to Jailbreak) – PS5 (FW ≤ 12.70)
+# P2JB (Patience to Jailbreak) – PS5 (FW ≤ 13.00)
 
  .1 Overview
   P2JB is a kernel-level issue in PlayStation 5 firmware up to and including 12.70. At a high level, it comes down to a missed credential reference release in sys_kqueueex, which leaves cr_ref on a ucred object incremented when the syscall fails in a specific way. By repeating that failure path enough times, the attacker can drive the credential reference count into an unsafe state and turn it into a much stronger kernel primitive. From there, the exploit chain can be extended into arbitrary read/write and, eventually, kernel code execution.
