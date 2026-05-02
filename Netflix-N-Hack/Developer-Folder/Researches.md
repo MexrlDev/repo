@@ -26,18 +26,18 @@ Netflix’s own UI and certification tests are written entirely against this pla
 
 Key sub‑objects:
 
-Module Purpose
-nrdp.gibbon Rendering system – widgets, scene, image loading
-nrdp.media / nrdp.mediasourceplayerfactory Media playback
-nrdp.device Device info (ESN, model, SDK version, capabilities)
-nrdp.storage Persistent key‑value storage (per device account)
-nrdp.registration Account registration / activation
-nrdp.PlayerControl High‑level playback controller (requires nrdjs)
-nrdp.audio Audio output (loading, playing, volume)
-nrdp.network Network diagnostics, interface list
-nrdp.instrumentation Event instrumentation for profiling / FPS
-nrdp.drmsystem DRM (PlayReady / Widevine)
-nrdp.SDKVersion Device SDK version info
+Module Purpose  
+nrdp.gibbon Rendering system – widgets, scene, image loading  
+nrdp.media / nrdp.mediasourceplayerfactory Media playback  
+nrdp.device Device info (ESN, model, SDK version, capabilities)  
+nrdp.storage Persistent key‑value storage (per device account)  
+nrdp.registration Account registration / activation  
+nrdp.PlayerControl High‑level playback controller (requires nrdjs)  
+nrdp.audio Audio output (loading, playing, volume)  
+nrdp.network Network diagnostics, interface list  
+nrdp.instrumentation Event instrumentation for profiling / FPS  
+nrdp.drmsystem DRM (PlayReady / Widevine)  
+nrdp.SDKVersion Device SDK version info  
 
 The runtime also defines nrdjs (the media JS layer) when loaded.
 
@@ -63,52 +63,52 @@ w.parent = someParentWidget;  // add to another widget
 
 Important Widget Properties
 
-Property Type Description
-x, y number Position (top‑left corner)
-width, height number Size (pixels)
-color {r,g,b,a} Background colour (alpha 0‑255)
-text string Display text
-textStyle object Text formatting (see below)
-image object Foreground image (scale, align, sourceRect)
-background object Background image (same structure)
-parent widget Parent widget (or undefined for a top‑level widget)
-visible boolean Show/hide
-opacity number 0‑1
-scale number Scale factor (affects size and position)
-drawOrder number Stacking order
-mirror boolean Mirror horizontally (for RTL languages)
-clip boolean Clip children to this widget’s bounds
-cache boolean Cache widget as a surface (performance)
-hidden boolean Alias for !visible
-name string Optional identifier
-id string Optional identifier (used in the higher‑level framework)
-rect object Set all position/size at once: {x, y, width, height}
-padding object Inner padding: {left, top, right, bottom, wrap}
-layout object Layout properties (see below)
-children array Read‑only list of child widgets
-scrollX / scrollY number Scroll offset (crops children)
+Property Type Description  
+x, y number Position (top‑left corner)  
+width, height number Size (pixels)  
+color {r,g,b,a} Background colour (alpha 0‑255)  
+text string Display text  
+textStyle object Text formatting (see below)  
+image object Foreground image (scale, align, sourceRect)  
+background object Background image (same structure)  
+parent widget Parent widget (or undefined for a top‑level widget)  
+visible boolean Show/hide  
+opacity number 0‑1  
+scale number Scale factor (affects size and position)  
+drawOrder number Stacking order  
+mirror boolean Mirror horizontally (for RTL languages)  
+clip boolean Clip children to this widget’s bounds  
+cache boolean Cache widget as a surface (performance)  
+hidden boolean Alias for !visible  
+name string Optional identifier  
+id string Optional identifier (used in the higher‑level framework)  
+rect object Set all position/size at once: {x, y, width, height}  
+padding object Inner padding: {left, top, right, bottom, wrap}  
+layout object Layout properties (see below)  
+children array Read‑only list of child widgets  
+scrollX / scrollY number Scroll offset (crops children)  
 
 Text Style (set via w.textStyle or as an object in w.text if using the framework) can include:
 
-Property Description
-size Font size (pt)
-align e.g. "left", "center", "right", "bottom", "center-horizontal", "center-both"
-color {r,g,b,a}
-wrap Boolean, enable word wrapping
-bold Boolean
-italic Boolean
-underline Boolean
-strikethrough Boolean
-lineHeight Number (e.g. 24)
-maxLines Maximum visible lines
-truncation {position:"end", ellipsis:"…"}
-shadow {offsetX, offsetY, color:{r,g,b,a}}
-edgeEffect {type:"outline", width:1, outlineColor, lightColor, darkColor}
-richText Boolean, enables span‑based formatting
-cursor {visible, position, interval, style, width, color}
-locale BCP‑47 language tag
+Property Description  
+size Font size (pt)  
+align e.g. "left", "center", "right", "bottom", "center-horizontal", "center-both"  
+color {r,g,b,a}  
+wrap Boolean, enable word wrapping  
+bold Boolean  
+italic Boolean  
+underline Boolean  
+strikethrough Boolean  
+lineHeight Number (e.g. 24)  
+maxLines Maximum visible lines  
+truncation {position:"end", ellipsis:"…"}  
+shadow {offsetX, offsetY, color:{r,g,b,a}}  
+edgeEffect {type:"outline", width:1, outlineColor, lightColor, darkColor}  
+richText Boolean, enables span‑based formatting  
+cursor {visible, position, interval, style, width, color}  
+locale BCP‑47 language tag  
 
-Image Handling
+Image Handling  
 The image (foreground) and backgroundImage properties can be a string URL, but more commonly an object:
 
 ```js
@@ -122,12 +122,12 @@ w.image = {
 
 Image data can come from URLs (http/https) or data URIs.
 
-Layout
+Layout  
 Widgets support a simple layout system for children.  Set layout on the parent:
 
-· layout: "vertical" – children stacked vertically.
-· layout: "horizontal" – children stacked horizontally.
-· layout: "flow" – flow layout like text (line wrapping).
+· layout: "vertical" – children stacked vertically.  
+· layout: "horizontal" – children stacked horizontally.  
+· layout: "flow" – flow layout like text (line wrapping).  
 · layout: "stack" – overlapping (usually just positions manually).
 
 Layout can also accept alignment options, e.g.:
@@ -174,22 +174,32 @@ nrdp.gibbon.addEventListener('key', function(event) {
 });
 ```
 
+```js
+nrdp.gibbon.addEventListener('key', function (event) {
+    if (event.data.type !== 'press') return;
+
+    if (event.data.uiEvent === 'key.enter') {
+        nrdp.exit();
+    }
+});
+```
+
 Known uiEvent mappings for PS4:
 
-Button uiEvent string
-D‑pad Up "key.up"
-D‑pad Down "key.down"
-D‑pad Left "key.left"
-D‑pad Right "key.right"
-Cross (X) "key.enter"
-Circle (O) "key.back"
-Triangle "key.context_sensitive_2" (likely)
-Square "key.context_sensitive_1" (likely)
-L1 "key.l1"
-R1 "key.r1"
-L2 "key.l2"
-R2 "key.r2"
-Options "key.options" (or "key.context_sensitive_1")
+Button uiEvent string  
+D‑pad Up "key.up"  
+D‑pad Down "key.down"  
+D‑pad Left "key.left"  
+D‑pad Right "key.right"  
+Cross (X) "key.enter"  
+Circle (O) "key.back"  
+Triangle "key.context_sensitive_2" (likely)  
+Square "key.context_sensitive_1" (likely)  
+L1 "key.l1"  
+R1 "key.r1"  
+L2 "key.l2"  
+R2 "key.r2"  
+Options "key.options" (or "key.context_sensitive_1")  
 
 The numeric data.code is also present but uiEvent is the recommended identifier.
 
@@ -253,46 +263,46 @@ The error.js file contains a complete, production‑ready UI framework that Netf
 
 At the top of error.js, a global gibbon object is created that wraps nrdp.gibbon and adds:
 
-· gibbon.makeWidget – an alias.
-· gibbon.setScene(widget) – sets nrdp.gibbon.scene.widget.
-· gibbon.scene.width / height – read‑only.
-· gibbon.color – a colour class with string parsing ("#RRGGBB", "rgb(r,g,b)").
-· gibbon.rect – a rectangle class with x, y, width, height, left, top, right, bottom, intersect, unite, etc.
-· gibbon.defaultTextStyle() – a default text style object with merge support.
-· gibbon.Widget – the core class of the framework (see below).
-· gibbon.parseMarkup / createWidgets – creates a widget tree from a JSON‑like object.
-· gibbon.style – a CSS‑like stylesheet system (classes and selectors).
-· gibbon.layout – a layout engine (vertical, horizontal, flow, grid, etc.).
-· gibbon.getElementById(id) – find a widget by its id property.
+· gibbon.makeWidget – an alias.  
+· gibbon.setScene(widget) – sets nrdp.gibbon.scene.widget.  
+· gibbon.scene.width / height – read‑only.  
+· gibbon.color – a colour class with string parsing ("#RRGGBB", "rgb(r,g,b)").  
+· gibbon.rect – a rectangle class with x, y, width, height, left, top, right, bottom, intersect, unite, etc.  
+· gibbon.defaultTextStyle() – a default text style object with merge support.  
+· gibbon.Widget – the core class of the framework (see below).  
+· gibbon.parseMarkup / createWidgets – creates a widget tree from a JSON‑like object.  
+· gibbon.style – a CSS‑like stylesheet system (classes and selectors).  
+· gibbon.layout – a layout engine (vertical, horizontal, flow, grid, etc.).  
+· gibbon.getElementById(id) – find a widget by its id property.  
 
 4.2 gibbon.Widget – The Framework Widget
 
 gibbon.Widget is not the raw NRDP widget, but a wrapper that provides a higher‑level API:
 
-· Each gibbon.Widget has an underlying _proxy (the actual nrdp.gibbon widget).
-· Properties are defined with getters/setters that mirror the proxy, but also support reactive styles, transitions, and layout.
-· Children are managed via an internal _children array.
-· The widget supports setProperties(markup) to apply multiple properties at once.
-· There is a style system: widget.style holds a style object, and widget.className can be set to apply CSS‑like class rules.
-· Layout is handled by a _layout property that can be set to a layout engine instance.
+· Each gibbon.Widget has an underlying _proxy (the actual nrdp.gibbon widget).  
+· Properties are defined with getters/setters that mirror the proxy, but also support reactive styles, transitions, and layout.  
+· Children are managed via an internal _children array.  
+· The widget supports setProperties(markup) to apply multiple properties at once.  
+· There is a style system: widget.style holds a style object, and widget.className can be set to apply CSS‑like class rules.  
+· Layout is handled by a _layout property that can be set to a layout engine instance.  
 
 Key Properties
 
 Same as the raw widget but with additional ones:
 
-· rect – get/set all position/size at once.
-· right, bottom – settable via widget.right = 50 (distance from parent’s right edge).
-· drawOrder, opacity, scale, hidden, clip, cache, mirror.
-· transformOriginX/Y – animation pivot.
-· display – special flags.
-· textStyle – as above, plus can be set via widget.text.style.size, etc. (using the p / text sub‑object in the framework).
-· image – foreground image (wrapped).
-· backgroundImage – background image.
-· padding, margin – for layout.
-· children – array of child widgets.
-· parent – getter/setter that reparents in the tree and on the proxy.
-· cloneNode(deep) – clone the widget.
-· getElementById, getElementsByClassName – search the subtree.
+· rect – get/set all position/size at once.  
+· right, bottom – settable via widget.right = 50 (distance from parent’s right edge).  
+· drawOrder, opacity, scale, hidden, clip, cache, mirror.  
+· transformOriginX/Y – animation pivot.  
+· display – special flags.  
+· textStyle – as above, plus can be set via widget.text.style.size, etc. (using the p / text sub‑object in the framework).  
+· image – foreground image (wrapped).  
+· backgroundImage – background image.  
+· padding, margin – for layout.  
+· children – array of child widgets.  
+· parent – getter/setter that reparents in the tree and on the proxy.  
+· cloneNode(deep) – clone the widget.  
+· getElementById, getElementsByClassName – search the subtree.  
 
 Text system: The text property in the framework is actually an object with its own sub‑properties (size, color, etc.) that eventually translates to the proxy’s text string and textStyle.  Renderers specify these as sub‑objects.
 
@@ -302,21 +312,21 @@ The framework includes a renderer abstraction that bridges declarative markup an
 
 view2.ARenderer (base class):
 
-· render() → returns a gibbon.Widget.
-· element getter caches the rendered widget.
-· set(properties) – marks properties for update.
-· reset() – restores default values.
-· commit() – applies batched sets and resets to the underlying widget(s).
+· render() → returns a gibbon.Widget.  
+· element getter caches the rendered widget.  
+· set(properties) – marks properties for update.  
+· reset() – restores default values.  
+· commit() – applies batched sets and resets to the underlying widget(s).  
 
 Renderer types:
 
-· view2.ContainerRenderer – a coloured box; supports cache, clip, layout, padding, background image, border, and can contain children.
-· view2.TextRenderer – text with alignment, colour, truncation, shadow, edge effect.
-· view2.ImageRenderer – image with source, alignment, aspect ratio.
-· view2.controls.ButtonRenderer – buttons (with state changes).
-· view2.controls.CollectionRenderer – a container that helps with collection views.
-· view2.dialog.DialogRenderer – the dialog background.
-· view2.customerservice.CustomerServiceRenderer – the customer service screen background.
+· view2.ContainerRenderer – a coloured box; supports cache, clip, layout, padding, background image, border, and can contain children.  
+· view2.TextRenderer – text with alignment, colour, truncation, shadow, edge effect.  
+· view2.ImageRenderer – image with source, alignment, aspect ratio.  
+· view2.controls.ButtonRenderer – buttons (with state changes).  
+· view2.controls.CollectionRenderer – a container that helps with collection views.  
+· view2.dialog.DialogRenderer – the dialog background.  
+· view2.customerservice.CustomerServiceRenderer – the customer service screen background.  
 
 Each renderer’s template is a JSON tree that is passed to gibbon.parseMarkup to create the initial widget structure.
 
@@ -324,14 +334,14 @@ Each renderer’s template is a JSON tree that is passed to gibbon.parseMarkup t
 
 Views are higher‑level objects that own a renderer and provide interaction:
 
-· view2.AView – base class: manages position, size, opacity, transforms, transitions, and a list of children.  Has methods like show(), hide(), focus(), blur(), destroy(), addChild(), removeChild().
-· view2.Container – a simple box.
-· view2.Text – a text label.
-· view2.Image – an image.
-· view2.controls.Button – a button with states (default, highlighted, pressed, disabled, selected) and callbacks.
-· view2.controls.Collection / ScrollableCollection – a container that positions children using a layout engine (stack, grid, engine) and supports data‑source updates, focusing, key navigation, and scrolling transitions.
-· view2.dialog.DialogView – a modal dialog with title, subtitle, code, and a button collection.
-· view2.customerservice.CustomerServiceView – the entire customer service menu (network info, device info, sign‑out, etc.).
+· view2.AView – base class: manages position, size, opacity, transforms, transitions, and a list of children.  Has methods like show(), hide(), focus(), blur(), destroy(), addChild(), removeChild().  
+· view2.Container – a simple box.  
+· view2.Text – a text label.  
+· view2.Image – an image.  
+· view2.controls.Button – a button with states (default, highlighted, pressed, disabled, selected) and callbacks.  
+· view2.controls.Collection / ScrollableCollection – a container that positions children using a layout engine (stack, grid, engine) and supports data‑source updates, focusing, key navigation, and scrolling transitions.  
+· view2.dialog.DialogView – a modal dialog with title, subtitle, code, and a button collection.  
+· view2.customerservice.CustomerServiceView – the entire customer service menu (network info, device info, sign‑out, etc.).  
 
 These views are designed to be used with the binding system (see section 6) to retrieve their dependencies.
 
@@ -339,9 +349,9 @@ These views are designed to be used with the binding system (see section 6) to r
 
 The view2.controls.layout namespace provides three engines for positioning child views:
 
-· Stack – arranges children along an axis ("x" or "y") with a given spacing and wrapping.
-· Engine – similar to Stack but tracks positions in a flat object; used in collections.
-· Grid – two‑dimensional grid layout; supports crosshair‑based virtual navigation and wrap behavior.
+· Stack – arranges children along an axis ("x" or "y") with a given spacing and wrapping.  
+· Engine – similar to Stack but tracks positions in a flat object; used in collections.  
+· Grid – two‑dimensional grid layout; supports crosshair‑based virtual navigation and wrap behavior.  
 
 These engines are used by ScrollableCollection to position its items.
 
@@ -349,10 +359,10 @@ These engines are used by ScrollableCollection to position its items.
 
 ScrollableCollection binds to an observable data source (e.g., an array or a Falcor path evaluator).  It automatically creates, reuses, and updates child views as the visible range changes.  It supports:
 
-· Smooth scrolling (translate animations).
-· Key‑based focus navigation (using the layout engine to find the nearest item in a direction).
-· Placeholder items.
-· View recycling.
+· Smooth scrolling (translate animations).  
+· Key‑based focus navigation (using the layout engine to find the nearest item in a direction).  
+· Placeholder items.  
+· View recycling.  
 
 This is how Netflix’s video lists work.
 
@@ -360,9 +370,9 @@ This is how Netflix’s video lists work.
 
 gibbon.style provides a CSS‑like class system on top of the widget tree:
 
-· A style sheet contains entries for class selectors (e.g., ".foo") and optionally parent selectors (e.g., ".bar>.foo").
-· When a widget’s className is set, the style sheet computes the merged effective style, and the widget’s onStyleChange method applies the properties directly to the widget.
-· Styles can include all standard properties, including transition definitions, which cause smooth animated changes when a class is swapped.
+· A style sheet contains entries for class selectors (e.g., ".foo") and optionally parent selectors (e.g., ".bar>.foo").  
+· When a widget’s className is set, the style sheet computes the merged effective style, and the widget’s onStyleChange method applies the properties directly to the widget.  
+· Styles can include all standard properties, including transition definitions, which cause smooth animated changes when a class is swapped.  
 
 Example from the code:
 
@@ -388,9 +398,9 @@ Setting a property will animate from the current value to the new value over the
 
 state is a hierarchical state stack system used to manage the application flow:
 
-· state.RootState – the root of the state tree.
-· state.StateStack – a stack of states; the topmost handles events and can push/pop substates (like entering a dialog or a card).
-· state.ICompoundState / ACompoundState – a state that can have a current active sub‑state.
+· state.RootState – the root of the state tree.  
+· state.StateStack – a stack of states; the topmost handles events and can push/pop substates (like entering a dialog or a card).  
+· state.ICompoundState / ACompoundState – a state that can have a current active sub‑state.  
 
 Events (like key presses or commands) are raised with state.raiseEvent(eventName, args).  The state chain can decide to handle the event or let it bubble up.
 
@@ -398,10 +408,10 @@ The main application root (application.AppRoot) extends state.RootState and defi
 
 The framework includes several card‑like states:
 
-· controller.DialogCardV2 – a modal dialog card.
-· controller.ErrorDialogCard – a simpler error dialog.
-· controller.RetryPageCard – a retry spinner.
-· controller.CustomerServiceCard – the customer service screen.
+· controller.DialogCardV2 – a modal dialog card.  
+· controller.ErrorDialogCard – a simpler error dialog.  
+· controller.RetryPageCard – a retry spinner.  
+· controller.CustomerServiceCard – the customer service screen.  
 
 These cards have onEnter/onExit lifecycle and can be pushed/popped on the state stack.
 
@@ -409,12 +419,12 @@ These cards have onEnter/onExit lifecycle and can be pushed/popped on the state 
 
 The framework includes a custom observable library (resembling RxJS) used extensively for data binding and event handling.
 
-· Rx.Observable – create, subscribe, map, filter, zip, combine, etc.
-· Rx.Subject, Rx.BehaviorSubject, Rx.ReplaySubject.
-· Event buses: application.keydown, application.keyup (Rx Subjects).
-· util.Observable – a simple event emitter (used before the Rx lib was available).
-· util.MultiLock – a lock that notifies when the first lock is acquired or the last is released (used for screensaver/idle).
-· util.KeyedObservable – a map of named emitters.
+· Rx.Observable – create, subscribe, map, filter, zip, combine, etc.  
+· Rx.Subject, Rx.BehaviorSubject, Rx.ReplaySubject.  
+· Event buses: application.keydown, application.keyup (Rx Subjects).  
+· util.Observable – a simple event emitter (used before the Rx lib was available).  
+· util.MultiLock – a lock that notifies when the first lock is acquired or the last is released (used for screensaver/idle).  
+· util.KeyedObservable – a map of named emitters.  
 
 4.11 The Binding / Dependency Injection System
 
@@ -428,9 +438,9 @@ This system is also used to manage the EVENT_DISPATCHER and other global service
 
 view2.EventDispatcher (bound as a singleton) is the central router for pointer and key events within the view hierarchy.  It maintains:
 
-· The current scene.
-· The list of views currently under the pointer.
-· The first responder chain.
+· The current scene.  
+· The list of views currently under the pointer.  
+· The first responder chain.  
 
 It translates raw key/mouse events into method calls on views (keyDown, pointerDown, etc.), respects nextResponder and event bubbling, and supports exclusive pointer constraints (for dialogs and the customer service card).
 
@@ -438,21 +448,21 @@ It translates raw key/mouse events into method calls on views (keyDown, pointerD
 
 application is a global object that holds:
 
-· application.AppDialog – a service to show dialogs with a priority system.
-· application.IdleTimeout – manages idle detection (for screen saver).
-· application.AppLock – a multi‑lock that can suspend the idle timer.
-· application.notifications – an instance of netflix.notification.ClientNotifications (used for logging UI events like views, focus, commands, and playback).
-· application.exit() – calls nrdp.exit().
-· application.reactivate() – performs a factory reset and reloads the boot URL.
+· application.AppDialog – a service to show dialogs with a priority system.  
+· application.IdleTimeout – manages idle detection (for screen saver).  
+· application.AppLock – a multi‑lock that can suspend the idle timer.  
+· application.notifications – an instance of netflix.notification.ClientNotifications (used for logging UI events like views, focus, commands, and playback).  
+· application.exit() – calls nrdp.exit().  
+· application.reactivate() – performs a factory reset and reloads the boot URL.  
 
 4.14 Logging & Customer Events
 
 The netflix.notification module is a sophisticated event logging system:
 
-· Defines events for UI views, intents, playback, QoE, search, etc.
-· Events are batched, persisted, and sent to Netflix servers (or local infrastructure).
-· Uses application.notifications.notifyStart/notifyEnd to mark session durations.
-· Can be suspended and restored (for app pause/resume).
+· Defines events for UI views, intents, playback, QoE, search, etc.  
+· Events are batched, persisted, and sent to Netflix servers (or local infrastructure).  
+· Uses application.notifications.notifyStart/notifyEnd to mark session durations.  
+· Can be suspended and restored (for app pause/resume).  
 
 This is not required for third‑party development but shows how robust the infrastructure is.
 
@@ -460,11 +470,11 @@ This is not required for third‑party development but shows how robust the infr
 
 error.js also contains polyfills to make the environment look more like a browser:
 
-· window, document, navigator, screen, console.
-· XMLHttpRequest (uses nrdp.gibbon.load under the hood).
-· localStorage / sessionStorage (backed by nrdp.storage).
-· setTimeout, clearTimeout, setInterval, clearInterval (global).
-· Image constructor (for preloading).
+· window, document, navigator, screen, console.  
+· XMLHttpRequest (uses nrdp.gibbon.load under the hood).  
+· localStorage / sessionStorage (backed by nrdp.storage).  
+· setTimeout, clearTimeout, setInterval, clearInterval (global).  
+· Image constructor (for preloading).  
 
 These polyfills enable a huge body of existing JavaScript code to run with minimal modifications.
 
@@ -482,16 +492,16 @@ The file uses a custom _dereq_ (require) function with a flat module index.  It 
 
 MiniMePlayer is a complete wrapper around the NRDJS player that simplifies playback automation:
 
-· Initialise: var player = new MiniMePlayer("test", qlMode); player.initialize(streamingConfig, playbackConfig).then(...)
-· Play a video: player.playVideo({viewableId: 80018710, currentTime: 0})
-· Wait for state: player.waitForState("PLAYING", timeout)
-· Pause, stop, seek, swim: player.pauseVideo(), player.stopVideo(), player.seekVideo({currentTime: 30}), player.swimVideo({delta: 60})
-· Set audio/subtitle tracks: player.setAudioTrack({language:"en", channels:"5.1"}), player.setSubtitleTrack({language:"en"})
-· Playlist support: player.setPlaylist(id, def), player.startPlaylistSegment(params)
-· Manifest filtering: player.setPreferredProfiles({video:/.*-h264hpl.*/}) – restricts the profiles the player can choose.
-· Playback error detection: player.waitForPlayerError() returns a promise that rejects with detailed error info.
-· Multi‑source: player.playUrl(urls, offset) for playing arbitrary HLS/DASH streams.
-· Instrumentation: player.waitForPlaybackReporterEvent({funcname:"updatePlaybackPts"})
+· Initialise: var player = new MiniMePlayer("test", qlMode); player.initialize(streamingConfig, playbackConfig).then(...)  
+· Play a video: player.playVideo({viewableId: 80018710, currentTime: 0})  
+· Wait for state: player.waitForState("PLAYING", timeout)  
+· Pause, stop, seek, swim: player.pauseVideo(), player.stopVideo(), player.seekVideo({currentTime: 30}), player.swimVideo({delta: 60})  
+· Set audio/subtitle tracks: player.setAudioTrack({language:"en", channels:"5.1"}), player.setSubtitleTrack({language:"en"})  
+· Playlist support: player.setPlaylist(id, def), player.startPlaylistSegment(params)  
+· Manifest filtering: player.setPreferredProfiles({video:/.*-h264hpl.*/}) – restricts the profiles the player can choose.  
+· Playback error detection: player.waitForPlayerError() returns a promise that rejects with detailed error info.  
+· Multi‑source: player.playUrl(urls, offset) for playing arbitrary HLS/DASH streams.  
+· Instrumentation: player.waitForPlaybackReporterEvent({funcname:"updatePlaybackPts"})  
 
 This player is used in almost every Netflix certification test and is a production‑quality foundation for building your own video player interface.
 
@@ -513,33 +523,33 @@ Uses nrdp.gibbon.scene.grab() or the newer sync/render event scheme.
 
 Image Comparison (libs/scenediff.js):
 
-· Compare actual vs. reference images using metrics: ae (absolute error), rmse, pdiff, with fuzz, percent, fov, colour factor, and optional spatial filters.
-· Reference images can be stored locally, in the DTA file service, or in the asset service (S3).
-· Automatic retries on mismatch (with optional scene re‑capture).
+· Compare actual vs. reference images using metrics: ae (absolute error), rmse, pdiff, with fuzz, percent, fov, colour factor, and optional spatial filters.  
+· Reference images can be stored locally, in the DTA file service, or in the asset service (S3).  
+· Automatic retries on mismatch (with optional scene re‑capture).  
 · Can generate reference images automatically when autogen is enabled.
 
 5.4 Memory & Performance Measurement
 
-· Memory snapshot: memory.getMemorySnapshot() returns JSC and system memory usage (by parsing smaps or NOVA meminfo).
-· Garbage collection: memory.garbageCollect() and memory.garbageCollectEverything() run nrdp.gibbon.garbageCollect() repeatedly until the heap stabilises.
+· Memory snapshot: memory.getMemorySnapshot() returns JSC and system memory usage (by parsing smaps or NOVA meminfo).  
+· Garbage collection: memory.garbageCollect() and memory.garbageCollectEverything() run nrdp.gibbon.garbageCollect() repeatedly until the heap stabilises.  
 · FPS measurement: animation.startFramerateMeasurement() enables instrumentation, then later animation.calculate() computes frame render times and FPS.
 
 5.5 Service Clients
 
-· simone – Full client for Netflix’s variant management API (Simone).  Create and delete variants, retrieve logs, control AB tests.
-· DtaTestConfiguration – Posts test configuration (device info, SDK version, etc.) to a DTA endpoint.
-· testrun – An abstraction layer that routes test results to different backends (DTA, NTS, local).  It manages starting/ending a test run, saving data, data series, and steps.
-· proxysec – A secure HTTP proxy using an ephemeral RSA key to talk to internal Netflix services.
-· dasClient – Uses MSL (NRDJS) to communicate with the DAS (Device Activation Service) for account creation in INT/NTS stacks.
+· simone – Full client for Netflix’s variant management API (Simone).  Create and delete variants, retrieve logs, control AB tests.  
+· DtaTestConfiguration – Posts test configuration (device info, SDK version, etc.) to a DTA endpoint.  
+· testrun – An abstraction layer that routes test results to different backends (DTA, NTS, local).  It manages starting/ending a test run, saving data, data series, and steps.  
+· proxysec – A secure HTTP proxy using an ephemeral RSA key to talk to internal Netflix services.  
+· dasClient – Uses MSL (NRDJS) to communicate with the DAS (Device Activation Service) for account creation in INT/NTS stacks.  
 
 These clients demonstrate how to perform complex network operations within the NRDP environment, including authentication, proxy security, and JSON‑based APIs.
 
 5.6 UI Testing Utilities
 
-· Automation class (from certification/gibbon/static/automatedTest.js) provides a step‑by‑step test runner with manual advancement (Enter/Right) or autorun, reference image overlay, and rollback.
-· Common.Widgets – pre‑built widgets: scene, testContainer, testRoot, refImgWidget.
-· Common.Helpers – setScene(), clearScene(), showReferenceImage(), navigateUp(), key handling.
-· Instruction widget – displays the current step description and result colour.
+· Automation class (from certification/gibbon/static/automatedTest.js) provides a step‑by‑step test runner with manual advancement (Enter/Right) or autorun, reference image overlay, and rollback.  
+· Common.Widgets – pre‑built widgets: scene, testContainer, testRoot, refImgWidget.  
+· Common.Helpers – setScene(), clearScene(), showReferenceImage(), navigateUp(), key handling.  
+· Instruction widget – displays the current step description and result colour.  
 
 5.7 Key Repeater & History
 
@@ -547,8 +557,8 @@ util.KeyRepeater handles repeating key presses with configurable initial wait an
 
 5.8 Debugging & Logging
 
-· LogScroll – a log viewer overlay that displays recent log messages in a scrollable widget.
-· Logger – a logger class used throughout, integrated with nrdp.log sinks.
+· LogScroll – a log viewer overlay that displays recent log messages in a scrollable widget.  
+· Logger – a logger class used throughout, integrated with nrdp.log sinks.  
 
 5.9 Resolution Scaling (Again)
 
@@ -564,9 +574,9 @@ Now that we understand both the low‑level APIs and the high‑level frameworks
 
 Your custom JavaScript can be loaded in several ways:
 
-· Via nrdp.gibbon.loadScript (if you have code execution on a test page).
-· By replacing the built‑in error page (e.g., setting http://localcontrol.netflix.com/js/error.js to a custom URL).
-· Through the automation stack – any test page can include your script.
+· Via nrdp.gibbon.loadScript (if you have code execution on a test page).  
+· By replacing the built‑in error page (e.g., setting http://localcontrol.netflix.com/js/error.js to a custom URL).  
+· Through the automation stack – any test page can include your script.  
 
 Once loaded, you have access to nrdp, gibbon (the wrapped version), view2, controller, and all the utility classes from error.js (because the error page’s framework is always present when the error page is active).  If the full ttrlibs.js is loaded, you also have MiniMePlayer, qtga, scenediff, etc.
 
@@ -627,25 +637,38 @@ nrdp.storage.setItem(nrdp.storage.NO_DEVICE_ACCOUNT, key, value) persists data a
 
 7. Key Architectural Insights
 
-· Separation of concerns: The error page framework is a clean MVC‑like system: state (controller), view2 (view), and bindings (model/DI).  This makes applications modular and testable.
-· Reactive everywhere: Nearly all data flows are streams (Rx).  This minimises manual synchronisation and makes UI updates automatic.
-· Declarative markup: The renderer system allows building complex widget trees from JSON, which could be loaded from a server or generated dynamically.
-· Extensible: By providing your own Renderer and AView subclasses, you can create custom reusable components (e.g., a minimap, a chart) that look and behave like Netflix’s own.
-· Performance: The framework batches widget updates (via the _push mechanism and pending sync) to minimise IPC overhead with the rendering engine.  Caching widgets (cache: true) is used for static parts of the UI.
-· RTL support: The framework supports right‑to‑left languages through automatic mirroring and the mirror property.
+· Separation of concerns: The error page framework is a clean MVC‑like system: state (controller), view2 (view), and bindings (model/DI).  This makes applications modular and testable.  
+· Reactive everywhere: Nearly all data flows are streams (Rx).  This minimises manual synchronisation and makes UI updates automatic.  
+· Declarative markup: The renderer system allows building complex widget trees from JSON, which could be loaded from a server or generated dynamically.  
+· Extensible: By providing your own Renderer and AView subclasses, you can create custom reusable components (e.g., a minimap, a chart) that look and behave like Netflix’s own.  
+· Performance: The framework batches widget updates (via the _push mechanism and pending sync) to minimise IPC overhead with the rendering engine.  Caching widgets (cache: true) is used for static parts of the UI.  
+· RTL support: The framework supports right‑to‑left languages through automatic mirroring and the mirror property.  
 
 ---
 
 8. Summary of Every Major Component
 
-Component File(s) Description
-Raw NRDP / gibbon tests.txt Widget creation, properties, scene, key events, timers
-Input handling & help help.txt PS4 key mappings, Snake game example, UI explanation
-High‑level UI framework error.js gibbon wrapper, gibbon.Widget, renderers, views, layout, styles, state stack, Rx, bindings, dialog, customer service, error page, scaling patch
-Test automation library ttrlibs.js MiniMePlayer, sceneCapture, scenediff, simone, testrun, log scroll, automation runner, performance metrics, proxysec, DAS client
+Component File(s) Description  
+Raw NRDP / gibbon tests.txt Widget creation, properties, scene, key events, timers  
+Input handling & help help.txt PS4 key mappings, Snake game example, UI explanation  
+High‑level UI framework error.js gibbon wrapper, gibbon.Widget, renderers, views, layout, styles, state stack, Rx, bindings, dialog, customer service, error page, scaling patch  
+Test automation library ttrlibs.js MiniMePlayer, sceneCapture, scenediff, simone, testrun, log scroll, automation runner, performance metrics, proxysec, DAS client  
 
 ---
 
 9. Conclusion
 
 The Netflix PS4 NRDP environment is an incredibly powerful platform for building native‑like applications, games, and diagnostic tools.  By combining the raw nrdp.gibbon API, the rich view framework from *.js, and the automation powerhouse of *.js, one can achieve virtually any graphical or media experience that the hardware supports—all while running inside the official Netflix application.
+
+---
+
+10. Cross Button Restart
+
+```js
+nrdp.gibbon.addEventListener('key', function(event) {
+    if (event.data.type !== 'press') return;
+    if (event.data.uiEvent === 'key.enter') {
+        nrdp.exit();
+    }
+});
+```
