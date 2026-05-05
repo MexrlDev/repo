@@ -3,18 +3,8 @@
  *
  * This software may be modified and distributed under the terms of the MIT license.
  *
- * Jsmaf ported (version BETA)
- *
- * Exploits a missing crfree() in sys_kqueueex to underflow the ucred
- * reference count, then uses a double‑free to gain kernel r/w and escape.
- *
- * Requirements:
- *   - userland.js must be loaded (ARW, fn, mem, rop, gadgets)
- *   - libc_addr, libkernel_addr must be initialised
- *   - fw version must be known via get_fwversion()
- *   - syscall 0xCB (kqueueex) on PS4
+ * Jsmaf ported (version BETA) but keep in mind this isnt tested so only use it to understand things 
  */
-
 // ---------- Constants & Offsets (PS4) ----------
 const SYS_KQUEUEEX    = 0xCB;
 const UCRED_SIZE       = 0x168;
