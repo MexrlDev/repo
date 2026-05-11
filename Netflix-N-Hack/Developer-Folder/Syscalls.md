@@ -1,14 +1,5 @@
-# ![PlayStation](https://img.shields.io/badge/PlayStation-PS4%20%7C%20PS5-003791?style=for-the-badge&logo=playstation&logoColor=white) PS4 Syscall List
-### Netflix n Hack / Lapse Research Findings
-
-A compact reference of commonly observed PlayStation 4 syscalls used across:
-- Userland research
-- Homebrew
-- Threading/runtime systems
-- Memory management
-- JIT environments
-- Sandbox analysis
-- Async I/O systems
+# ![PlayStation](https://img.shields.io/badge/PlayStation-PS4%20%7C%20PS5-003791?style=for-the-badge&logo=playstation&logoColor=white) 
+# Netflix Syscalls
 
 ---
 
