@@ -512,4 +512,5 @@ While LuaPlayer runs in user‑space, it exposes low‑level memory access. Home
 ---
 
 Use this fir API's
-https://github.com/MexrlDev/repo/blob/main/PS3/LuaPlayer-PS3/Development/Dumped-Lua.txt
+
+· [Api Debug Log](https://github.com/MexrlDev/repo/blob/main/PS3/LuaPlayer-PS3/Development/Dumped-Lua.txt)
