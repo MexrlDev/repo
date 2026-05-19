@@ -1,1 +1,20 @@
-soon..
+=== ELF Dissection Report ===
+File: /dev_usb001/raw_elf.bin
+ELF magic: OK
+Class: 64-bit
+Endianness: big
+Type: 2 (2=EXEC, 3=DYN)
+Machine: 0x15
+Entry point: 0x10000000
+Program header offset: 0x40, count: 8
+Section header offset: 0x3D6048, count: 26
+
+--- Program Headers ---
+PH  1: LOAD       vaddr=0x10000 offset=0x0 filesz=0x310EE8 memsz=0x310EE8 flags=0x5
+PH  2: LOAD       vaddr=0x330000 offset=0x320000 filesz=0x33B38 memsz=0x33B38 flags=0x6
+PH  3: LOAD       vaddr=0x10000000 offset=0x360000 filesz=0x6FBB2 memsz=0x6FBB2 flags=0x400004
+PH  4: LOAD       vaddr=0x10070000 offset=0x3D0000 filesz=0x5F40 memsz=0xA53F8 flags=0x600006
+PH  5: LOAD       vaddr=0x0 offset=0x3D5F40 filesz=0x0 memsz=0x0 flags=0x6600006
+PH  6: UNKNOWN    vaddr=0x363B38 offset=0x353B38 filesz=0x0 memsz=0x780 flags=0x4
+PH  7: UNKNOWN    vaddr=0x0 offset=0x0 filesz=0x0 memsz=0x0 flags=0x0
+PH  8: UNKNOWN    vaddr=0x320EC0 offset=0x310EC0 filesz=0x28 memsz=0x28 flags=0x0
