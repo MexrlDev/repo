@@ -97,6 +97,8 @@ Seven custom global tables extend the runtime with PS3 hardware capabilities.
 
 Full support for up to 7 controllers (DualShock 3 / Sixaxis), including digital, analogue, pressure‑sensitive, and motion axes.
 
+Call `pad.InitPads(n)` before reading any input — it takes the number of controllers you want active, e.g. `pad.InitPads(1)` for a single pad. Skipping this will give you garbage or zero values on all inputs.
+
 **Digital buttons** (return `true`/`false`):
 
 ```lua
@@ -135,13 +137,15 @@ Low‑level 2D and 3D rendering with vertex/pixel shader abstraction, blending, 
 **Core setup:**
 
 ```lua
-gfx.Init()                          -- initialise graphics
+gfx.Init(mode, param2)              -- initialise graphics — takes TWO numbers, e.g. gfx.Init(720, 0)
 gfx.Mode2D() / gfx.Mode3D()        -- switch between orthographic and perspective projection
 gfx.Flip()                          -- present frame
 gfx.Clear(color, zbuffer, stencil) -- clear buffers
 gfx.ClearScreen()                   -- quick clear
 gfx.End()                           -- end drawing
 ```
+
+> **Note:** `gfx.Init` requires exactly two numeric arguments. Calling it with one or none will error at runtime. The confirmed working call is `gfx.Init(720, 0)` — first arg is the video mode, second is the framebuffer index. Never call `gfx.Init` more than once; a second call will trigger a `tiny3d_Init()` failure and crash.
 
 **2D primitives:**
 
@@ -208,7 +212,7 @@ gfx.GetMatrixData()
 **Fonts:**
 
 ```lua
-gfx.InitFont()                          -- global init
+gfx.InitFont()                          -- global init (skip this — use gfx.FontSelect(0) instead, see below)
 gfx.FontAddBitmap() / gfx.FontAddTTF() -- load fonts
 gfx.FontSelect(font)
 gfx.FontSetSize(size)
@@ -221,10 +225,20 @@ gfx.FontDrawChar(x, y, char)
 gfx.FontGetX() / gfx.FontGetY()
 ```
 
+> **Note:** The global `InitFont()` helper expects a font file path and will error if you pass nothing. Skip it entirely and use the built-in font through the `gfx` module directly:
+> 
+> ```lua
+> gfx.FontSelect(0)                        -- slot 0 = built-in font, always available
+> gfx.FontSetSize(2.0)                     -- size multiplier
+> gfx.FontSetColors(0xFFFF00FF, 0x00000000) -- text color, background color
+> gfx.FontDrawString(10, 10, "Hello")
+> ```
+
 **Blending & alpha:**
 
 ```lua
-gfx.BlendFunction(rgbSrc, rgbDst, alphaSrc, alphaDst, rgbFunc, alphaFunc)
+gfx.BlendFunction(src, dst, alphaFunc)  -- three numbers, not six
+-- e.g. gfx.BlendFunction(gfx.BLEND_FUNC_SRC_ALPHA_ONE, gfx.BLEND_FUNC_DST_ALPHA_ZERO, gfx.BLEND_ALPHA_FUNC_ADD)
 gfx.AlphaTest(func, value)
 -- Constants: BLEND_FUNC_SRC_RGB_ONE, BLEND_FUNC_DST_ALPHA_ONE, BLEND_RGB_FUNC_ADD, etc.
 ```
@@ -405,18 +419,20 @@ LuaPlayer always loads a script named `app.lua`. The application searches for it
 
 Path: `/dev_hdd0/game/LUAP00001/app.lua`
 
-Place the script in the game’s data folder using a file manager (e.g., multiMAN).
+Drop `app.lua` into that folder using a file manager like multiMAN. That’s the full path — the `LUAP00001` folder is created when you install the `.pkg`.
 
 **2. USB Mass Storage**
 
 Root directory of any connected USB drive (`/dev_usb000/`, `/dev_usb001/`, …). The script must be named exactly `app.lua`.
 
-**Error logging behaviour:**
+**Error logging:**
 
-If a script crashes at runtime, LuaPlayer automatically writes an error report:
+If your script crashes at runtime, LuaPlayer writes a file called `lua_error_log.txt` automatically — no setup needed. Where it lands depends on where `app.lua` was loaded from:
 
-- When the script is loaded from **USB**, the error log is saved to the same USB device (usually in the root or a `logs/` subdirectory, depending on the build).
-- When the script is loaded from **internal HDD**, the error log is written locally inside `/dev_hdd0/game/LUAP00001/`.
+- Running from **USB** → `lua_error_log.txt` is written to the root of that same USB drive.
+- Running from **internal HDD** → `lua_error_log.txt` is written to `/dev_hdd0/game/LUAP00001/`.
+
+So if something blows up and the screen just goes black or exits, grab that file. It’ll have the exact Lua error and line number.
 
 **Headless execution:**
 
@@ -484,3 +500,153 @@ Long‑term support and development benefit from:
 # Conclusion
 
 LuaPlayer for PS3 v0.50 offers a unique gateway to writing and running Lua on the PS3 with near‑native hardware access. Its well‑documented API surface, straightforward script deployment, and automatic error reporting lower the barrier for console homebrew development. As a reference for future projects or as a stable base for new creations, it stands as a reliable and powerful homebrew engine.
+
+-----
+
+# Common Errors & Fixes
+
+These are the exact mistakes that come up when writing scripts for the first time. Every one of them was hit on real hardware — the fix is confirmed working.
+
+When something goes wrong, check `lua_error_log.txt` first (see [Script Deployment](#script-deployment--execution) above for where it lands). The error message will point you straight to the line.
+
+-----
+
+### 1. `gfx.Init` — wrong number of arguments
+
+The docs show `gfx.Init()` with no arguments, but it actually needs two numbers. Call it like this:
+
+```lua
+gfx.Init(720, 0)   -- video mode, framebuffer index
+```
+
+Confirmed working test sequence:
+
+```
+=== Probing gfx.Init(mode, param2) ===
+[TEST] gfx.Init(720, 0)
+[OK]   gfx.Init(720, 0) succeeded!
+[TEST] gfx.Mode2D()
+[OK]   Mode2D
+[TEST] FlipGFX()
+[OK]   FlipGFX
+--- End of test ---
+```
+
+Also, only call it once. A second `gfx.Init` call will trigger a `tiny3d_Init()` failure and crash the app.
+
+-----
+
+### 2. `InitFont` (global) — wants a font file path
+
+The global `InitFont()` helper expects a path to a font file. If you call it with no arguments it will error. Skip it entirely and use the built-in font through the `gfx` module:
+
+```lua
+gfx.FontSelect(0)                         -- slot 0 is the built-in font
+gfx.FontSetSize(2.0)
+gfx.FontSetColors(0xFFFF00FF, 0x00000000) -- text color, background color
+gfx.FontDrawString(x, y, "Hello")
+```
+
+-----
+
+### 3. `pad.InitPads` — needs the controller count
+
+```lua
+pad.InitPads(1)   -- always call this before reading any pad input
+```
+
+Without it, all button and stick reads return zero or garbage.
+
+-----
+
+### 4. `gfx.BlendFunction` — three arguments, not six
+
+Despite what some older references say, it takes three numbers:
+
+```lua
+gfx.BlendFunction(
+    gfx.BLEND_FUNC_SRC_ALPHA_ONE,
+    gfx.BLEND_FUNC_DST_ALPHA_ZERO,
+    gfx.BLEND_ALPHA_FUNC_ADD
+)
+```
+
+-----
+
+### 5. `gfx.VertexPosition` — always needs x, y, z
+
+Even in 2D, the z argument is required. Pass `0` for flat 2D drawing:
+
+```lua
+gfx.VertexPosition(x, y, 0)
+```
+
+-----
+
+### 6. `gfx.SetPolygon` — only `POINTS` (1) reliably works
+
+Other primitive types may behave unexpectedly. Stick with `gfx.POINTS` and call it once before the main loop, not inside it:
+
+```lua
+gfx.SetPolygon(gfx.POINTS)   -- set once at the top
+```
+
+-----
+
+### 7. Freeze or crash inside the main loop — slow it down
+
+A tight loop with no sleep will saturate the CPU and freeze or crash the console. Add a sleep after every frame:
+
+```lua
+sys.TimerUsleep(33000)   -- ~30 fps
+```
+
+If you only need to redraw when something changes, skip the draw entirely when idle:
+
+```lua
+if math.abs(lx) > 20 or math.abs(ly) > 20 then
+    -- draw and flip
+else
+    sys.TimerUsleep(10000)   -- idle, just wait
+end
+```
+
+-----
+
+## Safe Script Skeleton
+
+A minimal starting point that avoids all of the above. Use this as a base for any new graphical script:
+
+```lua
+gfx.Init(720, 0)
+gfx.Mode2D()
+gfx.Clear(gfx.CLEAR_COLOR, 0x0000FFFF)
+
+gfx.FontSelect(0)
+gfx.FontSetSize(2.0)
+gfx.FontSetColors(0xFFFF00FF, 0x00000000)
+
+gfx.SetPolygon(gfx.POINTS)   -- set once here, not in the loop
+
+pad.InitPads(1)
+
+while true do
+    if pad.start(0) then break end
+
+    local lx = pad.LanalogX(0)
+    local ly = pad.LanalogY(0)
+
+    if math.abs(lx) > 20 or math.abs(ly) > 20 then
+        gfx.Clear(gfx.CLEAR_COLOR, 0x0000FFFF)
+        gfx.VertexColor(0x00FF00FF)
+        -- your drawing here
+        gfx.FontDrawString(10, 10, "Working!")
+        FlipGFX()
+        sys.TimerUsleep(33000)
+    else
+        sys.TimerUsleep(10000)
+    end
+end
+
+EndGFX()
+```
