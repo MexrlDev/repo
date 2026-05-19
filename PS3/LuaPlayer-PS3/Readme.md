@@ -19,7 +19,7 @@
 
 ---
 
-# Executive Summary
+# ReadMe
 
 This document consolidates the **actual** runtime environment, API surface, deployment mechanics, and development constraints of **LuaPlayer for PS3 v0.50** – a homebrew application that executes Lua scripts on a PlayStation 3 console running custom firmware (CFW) or Hybrid Firmware (HFW). All findings are based on real‑hardware testing with firmware **4.92**.
 
