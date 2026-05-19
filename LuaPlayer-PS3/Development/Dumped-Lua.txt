@@ -1,0 +1,1051 @@
+=== PS3 Lua Full API Dump ===
+Date: Tue May 19 16:25:13 2026
+USB root used: /dev_usb001
+_VERSION: Lua 5.2
+
+[1] Global environment (tables & functions)
+--- pad (table) ---
+pad = {
+  R1PM (function)
+  L1PM (function)
+  circlePM (function)
+  start (function)
+  trianglePM (function)
+  up (function)
+  crossPM (function)
+  RanalogY (function)
+  Gaxis (function)
+  squarePM (function)
+  SetPressMode (function)
+  rightPM (function)
+  R2 (function)
+  SetSixaxis (function)
+  R2PM (function)
+  Yaxis (function)
+  leftPM (function)
+  Xaxis (function)
+  L2PM (function)
+  right (function)
+  EndPad (function)
+  Zaxis (function)
+  RanalogX (function)
+  LanalogY (function)
+  triangle (function)
+  InitPads (function)
+  select (function)
+  R3 (function)
+  L1 (function)
+  L3 (function)
+  downPM (function)
+  circle (function)
+  L2 (function)
+  left (function)
+  R1 (function)
+  cross (function)
+  square (function)
+  LanalogX (function)
+  upPM (function)
+  down (function)
+}
+
+--- gfx (table) ---
+gfx = {
+  SetTexture (function)
+  FontReset (function)
+  BLEND_FUNC_DST_ALPHA_ONE = 65536
+  BLEND_FUNC_DST_RGB_SRC_ALPHA = 770
+  Test1 (function)
+  TRIANGLE_STRIP = 6
+  MatrixRotationZ (function)
+  BLEND_FUNC_DST_RGB_DST_COLOR = 774
+  BLEND_FUNC_DST_RGB_CONSTANT_COLOR = 32769
+  BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_COLOR = 769
+  Flip (function)
+  UserViewport (function)
+  ALPHA_FUNC_NOTEQUAL = 517
+  BLEND_FUNC_SRC_ALPHA_DST_COLOR = 50724864
+  BLEND_FUNC_SRC_RGB_SRC_ALPHA = 770
+  MatrixRotationY (function)
+  LIGHT_SPECULAR = 2
+  DrawBG (function)
+  SurfaceFree (function)
+  BLEND_FUNC_SRC_RGB_ZERO = 0
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_SRC_COLOR = 50397184
+  MatrixTranslation (function)
+  POLYGON = 10
+  BLEND_RGB_FUNC_REVERSE_SUBTRACT = 32779
+  SetPolygon (function)
+  CLEAR_ALL = 243
+  TEX_FORMAT_L8 = 256
+  SurfaceSetPixel (function)
+  End (function)
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_SRC_COLOR = 769
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_DST_COLOR = 50790400
+  TEX_FORMAT_A1R5G5B5 = 512
+  BLEND_FUNC_DST_RGB_SRC_ALPHA_SATURATE = 776
+  MatrixSetProjection (function)
+  QUADS = 8
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_DST_ALPHA = 50659328
+  TEX_FORMAT_R5G6B5 = 1024
+  BLEND_FUNC_SRC_RGB_SRC_COLOR = 768
+  ALPHA_FUNC_LESS = 513
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_SRC_ALPHA = 50528256
+  LIGHT_DISABLED = 0
+  CLEAR_COLOR = 240
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_CONSTANT_COLOR = 2147614720
+  BLEND_FUNC_SRC_ALPHA_SRC_COLOR = 50331648
+  BLEND_FUNC_DST_RGB_ONE_MINUS_DST_ALPHA = 773
+  BLEND_FUNC_DST_ALPHA_SRC_COLOR = 50331648
+  BLEND_FUNC_SRC_ALPHA_DST_ALPHA = 50593792
+  MatrixScale (function)
+  SetAmbientLight (function)
+  BLEND_FUNC_DST_RGB_SRC_COLOR = 768
+  FontSetColors (function)
+  BLEND_FUNC_SRC_RGB_ONE = 1
+  LIGHT_DIFFUSE = 1
+  ALPHA_FUNC_LEQUAL = 515
+  FixUserViewport (function)
+  SurfaceNew (function)
+  MatrixRotationX (function)
+  BLEND_FUNC_DST_RGB_ZERO = 0
+  BLEND_ALPHA_MAX = 2148007936
+  MatrixNew (function)
+  GetVideoPitchSize (function)
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_CONSTANT_COLOR = 32770
+  FontGetY (function)
+  Mode3D (function)
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_DST_COLOR = 775
+  ALPHA_FUNC_NEVER = 512
+  FontSetAutoNewLine (function)
+  GetCurrentVideoBufferID (function)
+  SetLight (function)
+  MatrixMultiply (function)
+  BLEND_FUNC_DST_RGB_ONE_MINUS_DST_COLOR = 775
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_CONSTANT_COLOR = 2147614720
+  Z16 = 1073741824
+  Test (function)
+  ALPHA_FUNC_GEQUAL = 518
+  FontDrawString (function)
+  POINTS = 1
+  ClearScreen (function)
+  BLEND_FUNC_SRC_ALPHA_SRC_ALPHA_SATURATE = 50855936
+  BLEND_FUNC_DST_ALPHA_DST_COLOR = 50724864
+  BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_ALPHA = 771
+  BLEND_FUNC_SRC_RGB_CONSTANT_ALPHA = 32771
+  QUAD_STRIP = 9
+  FontAddBitmap (function)
+  TEXWRAP_MIRROR = 2
+  TEXWRAP_CLAMP = 1
+  TEXWRAP_REPEAT = 0
+  CLEARSURFACE_A1R5G5B5 = 0
+  MaterialSpecular (function)
+  BLEND_ALPHA_MIN = 2147942400
+  MatrixFree (function)
+  TEX_NEAREST = 0
+  LoadTexture (function)
+  TEX_FORMAT_A4R4G4B4 = 768
+  VertexPosition (function)
+  TRIANGLE_FAN = 7
+  TRIANGLES = 5
+  LINE_STRIP = 4
+  LINE_LOOP = 3
+  LINES = 2
+  BLEND_FUNC_SRC_RGB_SRC_ALPHA_SATURATE = 776
+  ALPHA_FUNC_EQUAL = 514
+  SetTextureWrap (function)
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_SRC_ALPHA = 771
+  BLEND_ALPHA_FUNC_ADD = 2147876864
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_SRC_COLOR = 50397184
+  TEX_LINEAR = 1
+  MatrixProjPerspective (function)
+  BLEND_RGB_FUNC_SUBTRACT = 32778
+  BLEND_RGB_MAX = 32776
+  Mode2D (function)
+  FontAddTTF (function)
+  VertexPosition4 (function)
+  BLEND_FUNC_SRC_ALPHA_ONE = 65536
+  BLEND_FUNC_SRC_RGB_CONSTANT_COLOR = 32769
+  BLEND_RGB_MIN = 32775
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_CONSTANT_ALPHA = 2147745792
+  BLEND_FUNC_SRC_ALPHA_ZERO = 0
+  BLEND_RGB_FUNC_ADD = 32774
+  BLEND_FUNC_DST_ALPHA_CONSTANT_ALPHA = 2147680256
+  TEX_FORMAT_A8R8G8B8 = 1280
+  BLEND_FUNC_DST_ALPHA_SRC_ALPHA_SATURATE = 50855936
+  BLEND_FUNC_DST_ALPHA_ONE_MINUS_DST_ALPHA = 50659328
+  BLEND_FUNC_DST_ALPHA_DST_ALPHA = 50593792
+  GetVideoResolution (function)
+  SetLightCameraPosition (function)
+  ALPHA_FUNC_GREATER = 516
+  BLEND_FUNC_DST_RGB_ONE_MINUS_CONSTANT_COLOR = 32770
+  BLEND_FUNC_SRC_RGB_DST_ALPHA = 772
+  VertexTexture (function)
+  BLEND_FUNC_DST_RGB_CONSTANT_ALPHA = 32771
+  BLEND_FUNC_DST_ALPHA_ZERO = 0
+  Clear (function)
+  BLEND_FUNC_DST_RGB_ONE_MINUS_CONSTANT_ALPHA = 32772
+  Init (function)
+  BLEND_ALPHA_FUNC_REVERSE_SUBTRACT = 2148204544
+  BLEND_FUNC_DST_ALPHA_SRC_ALPHA = 50462720
+  BLEND_ALPHA_FUNC_SUBTRACT = 2148139008
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_SRC_ALPHA = 50528256
+  FontSetAutoCenter (function)
+  GetVideoAspect (function)
+  MaterialDiffuse (function)
+  GetMatrixData (function)
+  BLEND_FUNC_DST_RGB_ONE = 1
+  VertexFColor (function)
+  MatrixSetModelView (function)
+  BLEND_FUNC_DST_RGB_DST_ALPHA = 772
+  SetLightsOff (function)
+  FontSetZ (function)
+  CLEAR_STENCIL = 2
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_CONSTANT_ALPHA = 2147745792
+  BLEND_FUNC_SRC_ALPHA_CONSTANT_ALPHA = 2147680256
+  BLEND_FUNC_SRC_ALPHA_CONSTANT_COLOR = 2147549184
+  FontGetX (function)
+  BLEND_FUNC_SRC_RGB_DST_COLOR = 774
+  FontSelect (function)
+  BLEND_FUNC_SRC_ALPHA_ONE_MINUS_DST_COLOR = 50790400
+  MaterialAmbient (function)
+  BLEND_FUNC_DST_ALPHA_CONSTANT_COLOR = 2147549184
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_DST_ALPHA = 773
+  AlphaTest (function)
+  ALPHA_FUNC_ALWAYS = 519
+  SurfaceClear (function)
+  CLEARSURFACE_A8R8G8B8 = 1
+  BLEND_FUNC_SRC_ALPHA_SRC_ALPHA = 50462720
+  BLEND_FUNC_SRC_RGB_ONE_MINUS_CONSTANT_ALPHA = 32772
+  BlendFunction (function)
+  CLEAR_ZBUFFER = 1
+  VertexColor (function)
+  MaterialEmissive (function)
+  FontSetSize (function)
+  FontDrawChar (function)
+}
+
+--- sys (table) ---
+sys = {
+  SYSUTIL_MENU_OPEN = 305
+  UtilCheckCallback (function)
+  ModuleIsLoaded (function)
+  Test1 (function)
+  UtilRegisterCallback (function)
+  UtilUnregisterCallback (function)
+  Rand (function)
+  TimeGetTimebaseFreq (function)
+  Lv1Poke (function)
+  SYSUTIL_DRAW_BEGIN = 289
+  SYSUTIL_MENU_CLOSE = 306
+  SYSUTIL_DRAW_END = 290
+  Lv2Peek (function)
+  ModuleUnload (function)
+  SYSUTIL_EXIT_GAME = 257
+  GetName (function)
+  Test2 (function)
+  Lv2Poke (function)
+  ModuleLoad (function)
+  TimerUsleep (function)
+  TimerSleep (function)
+  Lv1Peek (function)
+}
+
+--- fs (table) ---
+fs = {
+  Close (function)
+  Stat (function)
+  EXCL = 128
+  APPEND = 1024
+  Open (function)
+  SEEK_END = 2
+  TRUNC = 512
+  RDONLY = 0
+  Mkdir (function)
+  WriteTest (function)
+  Test (function)
+  ACCMODE = 3
+  Rmdir (function)
+  Rename (function)
+  Read (function)
+  Unlink (function)
+  CREAT = 64
+  Closedir (function)
+  RDWR = 2
+  MSELF = 4096
+  Readdir (function)
+  Mount (function)
+  Fstat (function)
+  GetFreeSize (function)
+  Write (function)
+  Umount (function)
+  ReadTest (function)
+  Opendir (function)
+  CopyFile (function)
+  SEEK_CUR = 1
+  Lseek (function)
+  SEEK_SET = 0
+  WRONLY = 1
+  Chmode (function)
+}
+
+--- net (table) ---
+net = {
+  initNetDebug (function)
+  dbg_printf (function)
+  Deinitialize (function)
+  Initialize (function)
+}
+
+--- surface (table) ---
+surface = {
+  DisplayFormat (function)
+  setRectPos (function)
+  getRes (function)
+  LoadIMG (function)
+  new (function)
+}
+
+--- snd (table) ---
+snd = {
+  FreeVoice (function)
+  StopVoice (function)
+  FreeBGMusic (function)
+  GetTimeBGMusic (function)
+  GetTotalTimeBGMusic (function)
+  SetBGMusic (function)
+  StatusBGMusic (function)
+  SetVolumeBGMusic (function)
+  Init (function)
+  ChangeFreqVoice (function)
+  Pause (function)
+  ChangeVolumeVoice (function)
+  SetTimeBGMusic (function)
+  PauseVoice (function)
+  PlayVoice (function)
+  PauseBGMusic (function)
+  StopBGMusic (function)
+  SetVoice (function)
+  PlayBGMusic (function)
+  Finalize (function)
+}
+
+--- mem (table) ---
+mem = {
+  ContainerDestroy (function)
+  ContainerCreate (function)
+  PAGE_SIZE_1M = 1024
+  Allocate (function)
+  ContainerGetSize (function)
+  GetUserMemorySize (function)
+  AllocateFromContainer (function)
+  PAGE_SIZE_64K = 512
+  Free (function)
+}
+
+--- bit32 (table) ---
+bit32 = {
+  rrotate (function)
+  arshift (function)
+  btest (function)
+  extract (function)
+  rshift (function)
+  lshift (function)
+  bor (function)
+  bnot (function)
+  lrotate (function)
+  replace (function)
+  bxor (function)
+  band (function)
+}
+
+--- StartGFX (function) ---
+  (global function)
+
+--- EndGFX (function) ---
+  (global function)
+
+--- InitGFX (function) ---
+  (global function)
+
+--- InitFont (function) ---
+  (global function)
+
+--- FlipGFX (function) ---
+  (global function)
+
+--- BlitToScreen (function) ---
+  (global function)
+
+--- DrawText (function) ---
+  (global function)
+
+--- ScreenRes (function) ---
+  (global function)
+
+--- rawlen (function) ---
+  (global function)
+
+[2] Other global tables (not in the list above)
+---  (table) ---
+ = {
+    package = {
+        preload = {
+        }
+        loaded = {
+            bit32 = { ... } (max depth)
+            package = { ... } (max depth)
+            os = { ... } (max depth)
+            math = { ... } (max depth)
+            snd = { ... } (max depth)
+            _G = { ... } (max depth)
+            table = { ... } (max depth)
+            pad = { ... } (max depth)
+             = { ... } (max depth)
+            gfx = { ... } (max depth)
+            mem = { ... } (max depth)
+            debug = { ... } (max depth)
+            net = { ... } (max depth)
+            coroutine = { ... } (max depth)
+            sys = { ... } (max depth)
+            io = { ... } (max depth)
+            string = { ... } (max depth)
+            fs = { ... } (max depth)
+        }
+      config = /
+;
+?
+!
+-
+
+      cpath = /usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/loadall.so;./?.so
+      searchpath (function)
+        searchers = {
+          [1] (function)
+          [2] (function)
+          [3] (function)
+          [4] (function)
+        }
+      path = /usr/local/share/lua/5.2/?.lua;/usr/local/share/lua/5.2/?/init.lua;/usr/local/lib/lua/5.2/?.lua;/usr/local/lib/lua/5.2/?/init.lua;./?.lua
+      loadlib (function)
+    }
+  FlipGFX (function)
+  next (function)
+  print (function)
+  type (function)
+  select (function)
+  pairs (function)
+    coroutine = {
+      running (function)
+      yield (function)
+      status (function)
+      wrap (function)
+      resume (function)
+      create (function)
+    }
+    pad = {
+      R1PM (function)
+      L1PM (function)
+      circlePM (function)
+      start (function)
+      trianglePM (function)
+      up (function)
+      crossPM (function)
+      RanalogY (function)
+      Gaxis (function)
+      squarePM (function)
+      SetPressMode (function)
+      rightPM (function)
+      R2 (function)
+      SetSixaxis (function)
+      R2PM (function)
+      Yaxis (function)
+      leftPM (function)
+      Xaxis (function)
+      L2PM (function)
+      right (function)
+      EndPad (function)
+      Zaxis (function)
+      RanalogX (function)
+      LanalogY (function)
+      triangle (function)
+      InitPads (function)
+      select (function)
+      R3 (function)
+      L1 (function)
+      L3 (function)
+      downPM (function)
+      circle (function)
+      L2 (function)
+      left (function)
+      R1 (function)
+      cross (function)
+      square (function)
+      LanalogX (function)
+      upPM (function)
+      down (function)
+    }
+     = (circular)
+  setmetatable (function)
+  tonumber (function)
+  ipairs (function)
+  BlitToScreen (function)
+  ScreenRes (function)
+  rawlen (function)
+  require (function)
+  rawequal (function)
+  DrawText (function)
+  error (function)
+  getmetatable (function)
+    bit32 = {
+      rrotate (function)
+      arshift (function)
+      btest (function)
+      extract (function)
+      rshift (function)
+      lshift (function)
+      bor (function)
+      bnot (function)
+      lrotate (function)
+      replace (function)
+      bxor (function)
+      band (function)
+    }
+    io = {
+      close (function)
+      output (function)
+      stdout (userdata)
+      stderr (userdata)
+      stdin (userdata)
+      flush (function)
+      open (function)
+      write (function)
+      read (function)
+      popen (function)
+      input (function)
+      type (function)
+      lines (function)
+      tmpfile (function)
+    }
+    os = {
+      tmpname (function)
+      time (function)
+      difftime (function)
+      getenv (function)
+      date (function)
+      rename (function)
+      setlocale (function)
+      remove (function)
+      execute (function)
+      clock (function)
+      exit (function)
+    }
+  assert (function)
+  InitFont (function)
+    sys = {
+      SYSUTIL_MENU_OPEN = 305
+      UtilCheckCallback (function)
+      ModuleIsLoaded (function)
+      Test1 (function)
+      UtilRegisterCallback (function)
+      UtilUnregisterCallback (function)
+      Rand (function)
+      TimeGetTimebaseFreq (function)
+      Lv1Poke (function)
+      SYSUTIL_DRAW_BEGIN = 289
+      SYSUTIL_MENU_CLOSE = 306
+      SYSUTIL_DRAW_END = 290
+      Lv2Peek (function)
+      ModuleUnload (function)
+      SYSUTIL_EXIT_GAME = 257
+      GetName (function)
+      Test2 (function)
+      Lv2Poke (function)
+      ModuleLoad (function)
+      TimerUsleep (function)
+      TimerSleep (function)
+      Lv1Peek (function)
+    }
+  StartGFX (function)
+    math = {
+      asin (function)
+      exp (function)
+      ldexp (function)
+      sinh (function)
+      huge = inf
+      pi = 3.1415926535898
+      log (function)
+      tanh (function)
+      acos (function)
+      tan (function)
+      fmod (function)
+      randomseed (function)
+      ceil (function)
+      deg (function)
+      abs (function)
+      modf (function)
+      sqrt (function)
+      pow (function)
+      rad (function)
+      max (function)
+      random (function)
+      sin (function)
+      cosh (function)
+      frexp (function)
+      atan (function)
+      floor (function)
+      cos (function)
+      min (function)
+      atan2 (function)
+    }
+  rawget (function)
+    string = {
+      find (function)
+      match (function)
+      lower (function)
+      byte (function)
+      gsub (function)
+      gmatch (function)
+      upper (function)
+      format (function)
+      reverse (function)
+      rep (function)
+      sub (function)
+      char (function)
+      len (function)
+      dump (function)
+    }
+    surface = {
+      DisplayFormat (function)
+      setRectPos (function)
+      getRes (function)
+      LoadIMG (function)
+      new (function)
+    }
+    gfx = {
+      SetTexture (function)
+      FontReset (function)
+      BLEND_FUNC_DST_ALPHA_ONE = 65536
+      BLEND_FUNC_DST_RGB_SRC_ALPHA = 770
+      Test1 (function)
+      TRIANGLE_STRIP = 6
+      MatrixRotationZ (function)
+      BLEND_FUNC_DST_RGB_DST_COLOR = 774
+      BLEND_FUNC_DST_RGB_CONSTANT_COLOR = 32769
+      BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_COLOR = 769
+      Flip (function)
+      UserViewport (function)
+      ALPHA_FUNC_NOTEQUAL = 517
+      BLEND_FUNC_SRC_ALPHA_DST_COLOR = 50724864
+      BLEND_FUNC_SRC_RGB_SRC_ALPHA = 770
+      MatrixRotationY (function)
+      LIGHT_SPECULAR = 2
+      DrawBG (function)
+      SurfaceFree (function)
+      BLEND_FUNC_SRC_RGB_ZERO = 0
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_SRC_COLOR = 50397184
+      MatrixTranslation (function)
+      POLYGON = 10
+      BLEND_RGB_FUNC_REVERSE_SUBTRACT = 32779
+      SetPolygon (function)
+      CLEAR_ALL = 243
+      TEX_FORMAT_L8 = 256
+      SurfaceSetPixel (function)
+      End (function)
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_SRC_COLOR = 769
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_DST_COLOR = 50790400
+      TEX_FORMAT_A1R5G5B5 = 512
+      BLEND_FUNC_DST_RGB_SRC_ALPHA_SATURATE = 776
+      MatrixSetProjection (function)
+      QUADS = 8
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_DST_ALPHA = 50659328
+      TEX_FORMAT_R5G6B5 = 1024
+      BLEND_FUNC_SRC_RGB_SRC_COLOR = 768
+      ALPHA_FUNC_LESS = 513
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_SRC_ALPHA = 50528256
+      LIGHT_DISABLED = 0
+      CLEAR_COLOR = 240
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_CONSTANT_COLOR = 2147614720
+      BLEND_FUNC_SRC_ALPHA_SRC_COLOR = 50331648
+      BLEND_FUNC_DST_RGB_ONE_MINUS_DST_ALPHA = 773
+      BLEND_FUNC_DST_ALPHA_SRC_COLOR = 50331648
+      BLEND_FUNC_SRC_ALPHA_DST_ALPHA = 50593792
+      MatrixScale (function)
+      SetAmbientLight (function)
+      BLEND_FUNC_DST_RGB_SRC_COLOR = 768
+      FontSetColors (function)
+      BLEND_FUNC_SRC_RGB_ONE = 1
+      LIGHT_DIFFUSE = 1
+      ALPHA_FUNC_LEQUAL = 515
+      FixUserViewport (function)
+      SurfaceNew (function)
+      MatrixRotationX (function)
+      BLEND_FUNC_DST_RGB_ZERO = 0
+      BLEND_ALPHA_MAX = 2148007936
+      MatrixNew (function)
+      GetVideoPitchSize (function)
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_CONSTANT_COLOR = 32770
+      FontGetY (function)
+      Mode3D (function)
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_DST_COLOR = 775
+      ALPHA_FUNC_NEVER = 512
+      FontSetAutoNewLine (function)
+      GetCurrentVideoBufferID (function)
+      SetLight (function)
+      MatrixMultiply (function)
+      BLEND_FUNC_DST_RGB_ONE_MINUS_DST_COLOR = 775
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_CONSTANT_COLOR = 2147614720
+      Z16 = 1073741824
+      Test (function)
+      ALPHA_FUNC_GEQUAL = 518
+      FontDrawString (function)
+      POINTS = 1
+      ClearScreen (function)
+      BLEND_FUNC_SRC_ALPHA_SRC_ALPHA_SATURATE = 50855936
+      BLEND_FUNC_DST_ALPHA_DST_COLOR = 50724864
+      BLEND_FUNC_DST_RGB_ONE_MINUS_SRC_ALPHA = 771
+      BLEND_FUNC_SRC_RGB_CONSTANT_ALPHA = 32771
+      QUAD_STRIP = 9
+      FontAddBitmap (function)
+      TEXWRAP_MIRROR = 2
+      TEXWRAP_CLAMP = 1
+      TEXWRAP_REPEAT = 0
+      CLEARSURFACE_A1R5G5B5 = 0
+      MaterialSpecular (function)
+      BLEND_ALPHA_MIN = 2147942400
+      MatrixFree (function)
+      TEX_NEAREST = 0
+      LoadTexture (function)
+      TEX_FORMAT_A4R4G4B4 = 768
+      VertexPosition (function)
+      TRIANGLE_FAN = 7
+      TRIANGLES = 5
+      LINE_STRIP = 4
+      LINE_LOOP = 3
+      LINES = 2
+      BLEND_FUNC_SRC_RGB_SRC_ALPHA_SATURATE = 776
+      ALPHA_FUNC_EQUAL = 514
+      SetTextureWrap (function)
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_SRC_ALPHA = 771
+      BLEND_ALPHA_FUNC_ADD = 2147876864
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_SRC_COLOR = 50397184
+      TEX_LINEAR = 1
+      MatrixProjPerspective (function)
+      BLEND_RGB_FUNC_SUBTRACT = 32778
+      BLEND_RGB_MAX = 32776
+      Mode2D (function)
+      FontAddTTF (function)
+      VertexPosition4 (function)
+      BLEND_FUNC_SRC_ALPHA_ONE = 65536
+      BLEND_FUNC_SRC_RGB_CONSTANT_COLOR = 32769
+      BLEND_RGB_MIN = 32775
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_CONSTANT_ALPHA = 2147745792
+      BLEND_FUNC_SRC_ALPHA_ZERO = 0
+      BLEND_RGB_FUNC_ADD = 32774
+      BLEND_FUNC_DST_ALPHA_CONSTANT_ALPHA = 2147680256
+      TEX_FORMAT_A8R8G8B8 = 1280
+      BLEND_FUNC_DST_ALPHA_SRC_ALPHA_SATURATE = 50855936
+      BLEND_FUNC_DST_ALPHA_ONE_MINUS_DST_ALPHA = 50659328
+      BLEND_FUNC_DST_ALPHA_DST_ALPHA = 50593792
+      GetVideoResolution (function)
+      SetLightCameraPosition (function)
+      ALPHA_FUNC_GREATER = 516
+      BLEND_FUNC_DST_RGB_ONE_MINUS_CONSTANT_COLOR = 32770
+      BLEND_FUNC_SRC_RGB_DST_ALPHA = 772
+      VertexTexture (function)
+      BLEND_FUNC_DST_RGB_CONSTANT_ALPHA = 32771
+      BLEND_FUNC_DST_ALPHA_ZERO = 0
+      Clear (function)
+      BLEND_FUNC_DST_RGB_ONE_MINUS_CONSTANT_ALPHA = 32772
+      Init (function)
+      BLEND_ALPHA_FUNC_REVERSE_SUBTRACT = 2148204544
+      BLEND_FUNC_DST_ALPHA_SRC_ALPHA = 50462720
+      BLEND_ALPHA_FUNC_SUBTRACT = 2148139008
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_SRC_ALPHA = 50528256
+      FontSetAutoCenter (function)
+      GetVideoAspect (function)
+      MaterialDiffuse (function)
+      GetMatrixData (function)
+      BLEND_FUNC_DST_RGB_ONE = 1
+      VertexFColor (function)
+      MatrixSetModelView (function)
+      BLEND_FUNC_DST_RGB_DST_ALPHA = 772
+      SetLightsOff (function)
+      FontSetZ (function)
+      CLEAR_STENCIL = 2
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_CONSTANT_ALPHA = 2147745792
+      BLEND_FUNC_SRC_ALPHA_CONSTANT_ALPHA = 2147680256
+      BLEND_FUNC_SRC_ALPHA_CONSTANT_COLOR = 2147549184
+      FontGetX (function)
+      BLEND_FUNC_SRC_RGB_DST_COLOR = 774
+      FontSelect (function)
+      BLEND_FUNC_SRC_ALPHA_ONE_MINUS_DST_COLOR = 50790400
+      MaterialAmbient (function)
+      BLEND_FUNC_DST_ALPHA_CONSTANT_COLOR = 2147549184
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_DST_ALPHA = 773
+      AlphaTest (function)
+      ALPHA_FUNC_ALWAYS = 519
+      SurfaceClear (function)
+      CLEARSURFACE_A8R8G8B8 = 1
+      BLEND_FUNC_SRC_ALPHA_SRC_ALPHA = 50462720
+      BLEND_FUNC_SRC_RGB_ONE_MINUS_CONSTANT_ALPHA = 32772
+      BlendFunction (function)
+      CLEAR_ZBUFFER = 1
+      VertexColor (function)
+      MaterialEmissive (function)
+      FontSetSize (function)
+      FontDrawChar (function)
+    }
+    snd = {
+      FreeVoice (function)
+      StopVoice (function)
+      FreeBGMusic (function)
+      GetTimeBGMusic (function)
+      GetTotalTimeBGMusic (function)
+      SetBGMusic (function)
+      StatusBGMusic (function)
+      SetVolumeBGMusic (function)
+      Init (function)
+      ChangeFreqVoice (function)
+      Pause (function)
+      ChangeVolumeVoice (function)
+      SetTimeBGMusic (function)
+      PauseVoice (function)
+      PlayVoice (function)
+      PauseBGMusic (function)
+      StopBGMusic (function)
+      SetVoice (function)
+      PlayBGMusic (function)
+      Finalize (function)
+    }
+  tostring (function)
+    fs = {
+      Close (function)
+      Stat (function)
+      EXCL = 128
+      APPEND = 1024
+      Open (function)
+      SEEK_END = 2
+      TRUNC = 512
+      RDONLY = 0
+      Mkdir (function)
+      WriteTest (function)
+      Test (function)
+      ACCMODE = 3
+      Rmdir (function)
+      Rename (function)
+      Read (function)
+      Unlink (function)
+      CREAT = 64
+      Closedir (function)
+      RDWR = 2
+      MSELF = 4096
+      Readdir (function)
+      Mount (function)
+      Fstat (function)
+      GetFreeSize (function)
+      Write (function)
+      Umount (function)
+      ReadTest (function)
+      Opendir (function)
+      CopyFile (function)
+      SEEK_CUR = 1
+      Lseek (function)
+      SEEK_SET = 0
+      WRONLY = 1
+      Chmode (function)
+    }
+  load (function)
+    debug = {
+      traceback (function)
+      getmetatable (function)
+      setupvalue (function)
+      upvaluejoin (function)
+      setmetatable (function)
+      setuservalue (function)
+      setlocal (function)
+      getupvalue (function)
+      debug (function)
+      getuservalue (function)
+      getregistry (function)
+      upvalueid (function)
+      gethook (function)
+      getinfo (function)
+      sethook (function)
+      getlocal (function)
+    }
+  EndGFX (function)
+  loadfile (function)
+    _G = (circular)
+    mem = {
+      ContainerDestroy (function)
+      ContainerCreate (function)
+      PAGE_SIZE_1M = 1024
+      Allocate (function)
+      ContainerGetSize (function)
+      GetUserMemorySize (function)
+      AllocateFromContainer (function)
+      PAGE_SIZE_64K = 512
+      Free (function)
+    }
+  InitGFX (function)
+    table = {
+      unpack (function)
+      sort (function)
+      insert (function)
+      remove (function)
+      pack (function)
+      concat (function)
+    }
+    net = {
+      initNetDebug (function)
+      dbg_printf (function)
+      Deinitialize (function)
+      Initialize (function)
+    }
+  _VERSION = Lua 5.2
+  rawset (function)
+  xpcall (function)
+  collectgarbage (function)
+  dofile (function)
+  pcall (function)
+}
+
+--- io (table) ---
+io = {
+  close (function)
+  output (function)
+  stdout (userdata)
+  stderr (userdata)
+  stdin (userdata)
+  flush (function)
+  open (function)
+  write (function)
+  read (function)
+  popen (function)
+  input (function)
+  type (function)
+  lines (function)
+  tmpfile (function)
+}
+
+--- os (table) ---
+os = {
+  tmpname (function)
+  time (function)
+  difftime (function)
+  getenv (function)
+  date (function)
+  rename (function)
+  setlocale (function)
+  remove (function)
+  execute (function)
+  clock (function)
+  exit (function)
+}
+
+--- math (table) ---
+math = {
+  asin (function)
+  exp (function)
+  ldexp (function)
+  sinh (function)
+  huge = inf
+  pi = 3.1415926535898
+  log (function)
+  tanh (function)
+  acos (function)
+  tan (function)
+  fmod (function)
+  randomseed (function)
+  ceil (function)
+  deg (function)
+  abs (function)
+  modf (function)
+  sqrt (function)
+  pow (function)
+  rad (function)
+  max (function)
+  random (function)
+  sin (function)
+  cosh (function)
+  frexp (function)
+  atan (function)
+  floor (function)
+  cos (function)
+  min (function)
+  atan2 (function)
+}
+
+--- string (table) ---
+string = {
+  find (function)
+  match (function)
+  lower (function)
+  byte (function)
+  gsub (function)
+  gmatch (function)
+  upper (function)
+  format (function)
+  reverse (function)
+  rep (function)
+  sub (function)
+  char (function)
+  len (function)
+  dump (function)
+}
+
+--- table (table) ---
+table = {
+  unpack (function)
+  sort (function)
+  insert (function)
+  remove (function)
+  pack (function)
+  concat (function)
+}
+
+[3] Filesystem listing (using 'fs' module)
+  'fs' table has no dir/list function. Keys in fs:
+    Close (function)
+    Stat (function)
+    EXCL (number)
+    APPEND (number)
+    Open (function)
+    SEEK_END (number)
+    TRUNC (number)
+    RDONLY (number)
+    Mkdir (function)
+    WriteTest (function)
+    Test (function)
+    ACCMODE (number)
+    Rmdir (function)
+    Rename (function)
+    Read (function)
+    Unlink (function)
+    CREAT (number)
+    Closedir (function)
+    RDWR (number)
+    MSELF (number)
+    Readdir (function)
+    Mount (function)
+    Fstat (function)
+    GetFreeSize (function)
+    Write (function)
+    Umount (function)
+    ReadTest (function)
+    Opendir (function)
+    CopyFile (function)
+    SEEK_CUR (number)
+    Lseek (function)
+    SEEK_SET (number)
+    WRONLY (number)
+    Chmode (function)
+
+[4] Direct file read test (using io.open)
+  /dev_flash/etc/version.txt not accessible: /dev_flash/etc/version.txt: No such file or directory
+  /dev_flash/vsh/etc/version.txt readable: release:04.9200:
+
+[5] Memory
+  Lua memory (KB): 124.9248046875
+
+=== End of Full Dump ===
