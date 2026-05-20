@@ -488,7 +488,7 @@ What It CANNOT Do
 
 ---
 
-Development Best Practices (Updated)
+Development Best Practices
 
 · Always write logs to USB; they are your only visual feedback.
 · Keep pad reads event‑driven, with debounce on start.
@@ -511,6 +511,6 @@ While LuaPlayer runs in user‑space, it exposes low‑level memory access. Home
 
 ---
 
-Use this fir API's
+Use this for API's
 
 · [Api Debug Log](https://github.com/MexrlDev/repo/blob/main/PS3/LuaPlayer-PS3/Development/Dumped-Lua.txt)
