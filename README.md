@@ -8,7 +8,6 @@
 * Any ideas by people that asks me to port or do coding will be here.
 
 ### Special Thanks To.
-* NathanDrake4530
 * Stand Video
 * Phoenixx
 * Akela_1979 (for Netflix-N-Hack port idea)
