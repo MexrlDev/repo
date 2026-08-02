@@ -6,10 +6,11 @@ import sys
 import socket
 
 # ── CONFIG ─────────────────────────────
-TARGET_IP     = "" # IP shown on screen or whatever here btw..
-PORT          = 9025 # change this to whatever port you wanna send the script to
+TARGET_IP     = "192.168.1.4" #  IP shown on screen or whatever here btw..  
+PORT          = 9025 # change this to whatever port you wanna send the script to.
 PAYLOAD_DIR   = "payloads" # folder the payload is in btw
-DEFAULT_FILE  = "payload.py" # payload name in the payload folder.. can be whatever extension you want.
+DEFAULT_FILE  = "payload.py" # payload name in the payload folder.. can be whatever extension you want. lua, js, py, etc..
+IP_FILE       = "target_ip.txt"
 TIMEOUT       = 6        
 # ───────────────────────────────────────
 
@@ -27,7 +28,33 @@ def banner():
 def ensure_payload_dir():
     if not os.path.isdir(PAYLOAD_DIR):
         os.makedirs(PAYLOAD_DIR)
-        print(f"{G}[+]{W} Created '{PAYLOAD_DIR}/' — put your payloads inside.")
+        print(f"{G}[+]{W} Created '{PAYLOAD_DIR}/' put your payloads inside.")
+
+def read_target_file():
+    if not os.path.isfile(IP_FILE):
+        example_content = "# Put your target IP or IP:PORT here\n# Example: 192.168.1.100\n# Example with port: 192.168.1.100:9025\n\n"
+        with open(IP_FILE, "w", encoding="utf-8") as f:
+            f.write(example_content)
+        print(f"{Y}[~]{W} '{IP_FILE}' not found, created default file.")
+        return None, None
+
+    with open(IP_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    valid_lines = [line.strip() for line in lines if line.strip() and not line.strip().startswith("#")]
+    
+    if not valid_lines:
+        return None, None
+
+    data = valid_lines[0]
+    
+    if ":" in data:
+        ip, port_str = data.split(":", 1)
+        try:
+            return ip.strip(), int(port_str.strip())
+        except ValueError:
+            return ip.strip(), None
+    return data, None
 
 def pick_payload(name):
     if os.sep in name or os.path.isabs(name):
@@ -87,7 +114,6 @@ def main():
     path, code = pick_payload(payload_name)
     if code is None:
         print(f"\n{R}[!]{W} Put your payload in: {PAYLOAD_DIR}/")
-        print(f"    Or pass a filename:  python3 {sys.argv[0]}")
         sys.exit(1)
 
     print(f"{G}[+]{W} Payload : {path} ({len(code.encode('utf-8'))} bytes)")
@@ -95,6 +121,13 @@ def main():
     host = TARGET_IP
     port = PORT
     source = "script config"
+
+    file_ip, file_port = read_target_file()
+    if file_ip:
+        host = file_ip
+        source = IP_FILE
+        if file_port:
+            port = file_port
 
     if len(sys.argv) >= 3:
         cli_arg = sys.argv[2]
@@ -111,8 +144,7 @@ def main():
 
     if not host:
         print(f"\n{R}[!]{W} No IP configured.")
-        print("    1. Edit this script and set TARGET_IP")
-        print(f"    2. Pass it directly: python3 {sys.argv[0]} payload.js 192.168.1.X")
+        print("    1. Edit TARGET_IP in script or fill target_ip.txt")
         sys.exit(1)
 
     print(f"{G}[+]{W} Target  : {host}:{port}  (from {source})\n")
@@ -128,7 +160,7 @@ def main():
     ok, result = send(code, host, port)
 
     if ok:
-        print(f"{G}[+]{W} Sent {result} bytes — payload delivered!")
+        print(f"{G}[+]{W} Sent {result} bytes, payload delivered!")
     else:
         print(f"{R}[!]{W} Send failed: {result}")
         sys.exit(1)
