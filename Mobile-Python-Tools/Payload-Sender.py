@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Works on pythonica for iphone, PyCode for android. ans works for any payload listener.
+# Read the Setup please! https://github.com/MexrlDev/repo/blob/main/Mobile-Python-Tools/Readme.md
 
 import os
 import sys
