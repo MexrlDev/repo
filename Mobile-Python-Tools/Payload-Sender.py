@@ -6,7 +6,7 @@ import sys
 import socket
 
 # ── CONFIG ─────────────────────────────
-TARGET_IP     = "192.168.1.4" #  IP shown on screen or whatever here btw..  
+TARGET_IP     = "" #  IP shown on screen or whatever here btw..  
 PORT          = 9025 # change this to whatever port you wanna send the script to.
 PAYLOAD_DIR   = "payloads" # folder the payload is in btw
 DEFAULT_FILE  = "payload.py" # payload name in the payload folder.. can be whatever extension you want. lua, js, py, etc..
