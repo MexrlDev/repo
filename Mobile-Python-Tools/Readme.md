@@ -1,4 +1,6 @@
-## How to setup the scripts in this folder?
+# How to setup the scripts in this folder?
+
+
 ### IOS SetUp
 * Download Pythonica on iOS. And open it to auto create the DOC files, after that just open Pythonica and make a new script called whatever you want .py paste the script inside this and press the run button up right.
 
@@ -10,3 +12,8 @@
 * iPhone: check Settings → Privacy & Security → Local Network and make sure Pythonica has Local Network permission.
 
 * Android: check the app’s permissions and make sure it isn’t being restricted from local network access. Also disable any setting that isolates apps from the local network.
+
+# Python Apps Android + IOS Debugging Tools
+* [dump Pythonica + the dump txt](https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/Pythonica-Other-Tools/Dumper) can be used to create new python scripts for Pythonica to work.
+
+* [dump PyCode + the dump txt]([https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/Pythonica-Other-Tools/Dumper](https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/PyCode-Tools/dumper)) same as pythonica
