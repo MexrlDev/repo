@@ -16,4 +16,4 @@
 # Python Apps Android + IOS Debugging Tools
 * [dump Pythonica + the dump txt](https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/Pythonica-Other-Tools/Dumper) can be used to create new python scripts for Pythonica to work.
 
-* [dump PyCode + the dump txt]([https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/Pythonica-Other-Tools/Dumper](https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/PyCode-Tools/dumper)) same as pythonica
+* [dump PyCode + the dump txt](https://github.com/MexrlDev/Star-Wars-Racer-Revenge-Mods/tree/main/PyCode-Tools/dumper) same as pythonica 
