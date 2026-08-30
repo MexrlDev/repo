@@ -1,5 +1,10 @@
-# How to setup the scripts in this folder?
+# Python Tools
 
+* Made for Mobile, and pc.
+* this contain the source code of the stuff I release
+* I add new payloads, etc in here not in the release so here are mostly new payloads with updates.
+
+# How to setup the scripts in this folder?
 
 ### IOS SetUp
 * Download Pythonica on iOS. And open it to auto create the DOC files, after that just open Pythonica and make a new script called whatever you want .py paste the script inside this and press the run button up right.
