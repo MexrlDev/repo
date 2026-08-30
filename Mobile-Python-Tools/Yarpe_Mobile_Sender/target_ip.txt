@@ -1,0 +1,4 @@
+# Put your target IP or IP:PORT here
+# Example: 192.168.1.100
+# Example with port: 192.168.1.100:9025
+
