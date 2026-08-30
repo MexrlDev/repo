@@ -7,6 +7,9 @@
 ### Android SetUp
 * Install an app called PyCode you can get it as APK nor Play Store.. anyways after you get it, just also paste the script in whatever whichever way you like.
 
+### Pc Setup
+* Install or Use Python 3.6 or later then compress the file and make sure to edit the ip to your ps ip in the code and then lunch it and it should work as long as you have the payload in the payload/ folder and you put the payload with the payload extension with it.
+ 
 # Troubleshoot
 * If using any script on Pythonica or PyCode and the script log that no router or something similar. Please make sure to enable local network connection for pythonica to detect the ps4/ps5 by going through these steps
 * iPhone: check Settings → Privacy & Security → Local Network and make sure Pythonica has Local Network permission.
