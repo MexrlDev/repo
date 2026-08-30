@@ -9,7 +9,10 @@
 
 ### Pc Setup
 * Install or Use Python 3.6 or later then compress the file and make sure to edit the ip to your ps ip in the code and then lunch it and it should work as long as you have the payload in the payload/ folder and you put the payload with the payload extension with it.
- 
+
+### IMPORTANT
+* **MAKE SURE TO PUT YOUR FILE BIN, LUA, PY, ETC TO SEND YOUR PLAYSTATION IN THE PAYLOAD FOLDER AND CHANGE THE NAME OF THE PAYLOAD TO YOUR PAYLOAD NAME WITH THE EXTENSION, AND MAKE SURE YOUR IP IS ADDED BETWEEN THE “” < ADD YOUR IP HERE AND INSURE THR PORT IS THE SAME AS WHATS SHOWN ON PLAYSTATION SCREEN**
+
 # Troubleshoot
 * If using any script on Pythonica or PyCode and the script log that no router or something similar. Please make sure to enable local network connection for pythonica to detect the ps4/ps5 by going through these steps
 * iPhone: check Settings → Privacy & Security → Local Network and make sure Pythonica has Local Network permission.
