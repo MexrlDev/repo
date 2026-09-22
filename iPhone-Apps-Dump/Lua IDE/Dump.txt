@@ -1,0 +1,22 @@
+Lua 5.4 (stock) inside eu.wenhuan.ide.lua on iOS 26.4.1
+
+GLOBALS       all standard
+math          all standard, random+randomseed share one RNG-state userdata
+string        all standard
+table         all standard
+utf8          all standard
+os            all standard (getenv/date/time/clock/remove/rename/execute/exit/tmpname/setlocale/difftime)
+io            all standard (open/read/write/lines/close/popen/input/output/tmpfile/type/flush + stdin/stdout/stderr)
+coroutine     all standard
+debug         full (getinfo, getlocal, getupvalue, getregistry, sethook,
+                     setlocal, setupvalue, setuservalue, getuservalue,
+                     getmetatable, setmetatable, traceback, upvalueid,
+                     upvaluejoin, gethook, debug, setcstacklimit)
+package       all standard, path/cpath point at nonexistent Unix dirs,
+                     loaded = the 11 stdlib modules, preload = {}, searchers = stock 5
+require       closes over package itself
+registry      [1]=main thread  [2]=_G  _LOADED  _PRELOAD  _CLIBS(empty)
+              FILE*  _IO_input  _IO_output
+string_mt     __index=string + arithmetic metamethods
+FILE*_mt      __gc __close __tostring __name __index(file methods)
+__lua_objc    userdata, no metatable, no uservalues — inert stub
