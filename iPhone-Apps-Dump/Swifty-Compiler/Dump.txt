@@ -1,0 +1,1287 @@
+
+
+▶︎  CAPABILITY PROBES
+----------------------------------------------
+  read  /etc/hostname: OK (58 bytes)
+  write /tmp/dump_probe_14.tmp: OK
+  list  /tmp: 1 entries
+  exec  /bin/true: OK (exit 0)
+  tool  /usr/bin/nm: present
+
+
+▶︎  PROCESS IDENTITY
+----------------------------------------------
+pid:                14
+ppid:               13
+exe:                /usr/bin/swift
+cwd:                /app
+root:               /
+hostname:           localhost
+os version:         Unknown
+processor count:    4
+active processors:  4
+physical memory:    16772988928 bytes
+system uptime:      422042.517134666 s
+globally unique id: D1ACCD06-42B3-4CBB-A659-65AED9BC82B3
+
+
+▶︎  COMMAND LINE
+----------------------------------------------
+[0] /usr/bin/swift
+[1] -frontend
+[2] -interpret
+[3] -
+[4] -disable-objc-interop
+[5] -module-name
+[6] main
+
+
+▶︎  FULL MEMORY MAPS (/proc/self/maps)
+----------------------------------------------
+Total mapped regions: 147
+
+   0  00400000-06739000 r-xp 00000000 08:03 1831945                            /usr/bin/swift
+   1  0673a000-06bab000 r--p 06339000 08:03 1831945                            /usr/bin/swift
+   2  06bab000-06bc2000 rw-p 067aa000 08:03 1831945                            /usr/bin/swift
+   3  06bc2000-06c0c000 rw-p 00000000 00:00 0 
+   4  1d50a000-205a1000 rw-p 00000000 00:00 0                                  [heap]
+   5  7507d0000000-7507d0021000 rw-p 00000000 00:00 0 
+   6  7507d0021000-7507d4000000 ---p 00000000 00:00 0 
+   7  7507d8000000-7507d8021000 rw-p 00000000 00:00 0 
+   8  7507d8021000-7507dc000000 ---p 00000000 00:00 0 
+   9  7507dc000000-7507dcfec000 rw-p 00000000 00:00 0 
+  10  7507dcfec000-7507e0000000 ---p 00000000 00:00 0 
+  11  7507e250e000-7507e250f000 ---p 00000000 00:00 0 
+  12  7507e250f000-7507e2d0f000 rw-p 00000000 00:00 0 
+  13  7507e2d0f000-7507e2d10000 ---p 00000000 00:00 0 
+  14  7507e2d10000-7507e3510000 rw-p 00000000 00:00 0 
+  15  7507e3510000-7507e354b000 r-xp 00000000 08:03 1833407                    /usr/lib/swift/linux/libswiftSwiftOnoneSupport.so
+  16  7507e354b000-7507e354c000 r--p 0003a000 08:03 1833407                    /usr/lib/swift/linux/libswiftSwiftOnoneSupport.so
+  17  7507e354c000-7507e354d000 rw-p 0003b000 08:03 1833407                    /usr/lib/swift/linux/libswiftSwiftOnoneSupport.so
+  18  7507e354d000-7507e354f000 r-xp 00000000 08:03 1833387                    /usr/lib/swift/linux/libBlocksRuntime.so
+  19  7507e354f000-7507e374e000 ---p 00002000 08:03 1833387                    /usr/lib/swift/linux/libBlocksRuntime.so
+  20  7507e374e000-7507e374f000 r--p 00001000 08:03 1833387                    /usr/lib/swift/linux/libBlocksRuntime.so
+  21  7507e374f000-7507e3750000 rw-p 00002000 08:03 1833387                    /usr/lib/swift/linux/libBlocksRuntime.so
+  22  7507e3750000-7507e377d000 r-xp 00000000 08:03 1833404                    /usr/lib/swift/linux/libswiftDispatch.so
+  23  7507e377d000-7507e377e000 ---p 0002d000 08:03 1833404                    /usr/lib/swift/linux/libswiftDispatch.so
+  24  7507e377e000-7507e3780000 r--p 0002d000 08:03 1833404                    /usr/lib/swift/linux/libswiftDispatch.so
+  25  7507e3780000-7507e3782000 rw-p 0002f000 08:03 1833404                    /usr/lib/swift/linux/libswiftDispatch.so
+  26  7507e3782000-7507e3784000 rw-p 00000000 00:00 0 
+  27  7507e3784000-7507e3f80000 r-xp 00000000 08:03 1833388                    /usr/lib/swift/linux/libFoundation.so
+  28  7507e3f80000-7507e3f9d000 r--p 007fb000 08:03 1833388                    /usr/lib/swift/linux/libFoundation.so
+  29  7507e3f9d000-7507e3fdc000 rw-p 00818000 08:03 1833388                    /usr/lib/swift/linux/libFoundation.so
+  30  7507e3fdc000-7507e4000000 rw-p 00000000 00:00 0 
+  31  7507e4000000-7507e58af000 rw-p 00000000 00:00 0 
+  32  7507e58af000-7507e8000000 ---p 00000000 00:00 0 
+  33  7507e8001000-7507e8019000 r-xp 00000000 00:00 0 
+  34  7507e8019000-7507e8026000 r-xp 00000000 08:03 1833405                    /usr/lib/swift/linux/libswiftGlibc.so
+  35  7507e8026000-7507e8027000 ---p 0000d000 08:03 1833405                    /usr/lib/swift/linux/libswiftGlibc.so
+  36  7507e8027000-7507e8028000 r--p 0000d000 08:03 1833405                    /usr/lib/swift/linux/libswiftGlibc.so
+  37  7507e8028000-7507e8029000 rw-p 0000e000 08:03 1833405                    /usr/lib/swift/linux/libswiftGlibc.so
+  38  7507e8029000-7507e8075000 r-xp 00000000 08:03 1833393                    /usr/lib/swift/linux/libdispatch.so
+  39  7507e8075000-7507e8087000 r--p 0004b000 08:03 1833393                    /usr/lib/swift/linux/libdispatch.so
+  40  7507e8087000-7507e8088000 rw-p 0005d000 08:03 1833393                    /usr/lib/swift/linux/libdispatch.so
+  41  7507e8088000-7507e808b000 rw-p 00000000 00:00 0 
+  42  7507e808b000-7507e808d000 r-xp 00000000 08:03 1817561                    /lib/x86_64-linux-gnu/libutil-2.27.so
+  43  7507e808d000-7507e828c000 ---p 00002000 08:03 1817561                    /lib/x86_64-linux-gnu/libutil-2.27.so
+  44  7507e828c000-7507e828d000 r--p 00001000 08:03 1817561                    /lib/x86_64-linux-gnu/libutil-2.27.so
+  45  7507e828d000-7507e828e000 rw-p 00002000 08:03 1817561                    /lib/x86_64-linux-gnu/libutil-2.27.so
+  46  7507e828e000-7507e9c33000 r--p 00000000 08:03 1833396                    /usr/lib/swift/linux/libicudataswift.so.61.1
+  47  7507e9c33000-7507e9e32000 ---p 019a5000 08:03 1833396                    /usr/lib/swift/linux/libicudataswift.so.61.1
+  48  7507e9e32000-7507e9e33000 r--p 019a4000 08:03 1833396                    /usr/lib/swift/linux/libicudataswift.so.61.1
+  49  7507e9e33000-7507e9fff000 r-xp 00000000 08:03 1833402                    /usr/lib/swift/linux/libicuucswift.so.61.1
+  50  7507e9fff000-7507ea1ff000 ---p 001cc000 08:03 1833402                    /usr/lib/swift/linux/libicuucswift.so.61.1
+  51  7507ea1ff000-7507ea211000 r--p 001cc000 08:03 1833402                    /usr/lib/swift/linux/libicuucswift.so.61.1
+  52  7507ea211000-7507ea212000 rw-p 001de000 08:03 1833402                    /usr/lib/swift/linux/libicuucswift.so.61.1
+  53  7507ea212000-7507ea213000 rw-p 00000000 00:00 0 
+  54  7507ea213000-7507ea4fa000 r-xp 00000000 08:03 1833399                    /usr/lib/swift/linux/libicui18nswift.so.61.1
+  55  7507ea4fa000-7507ea6f9000 ---p 002e7000 08:03 1833399                    /usr/lib/swift/linux/libicui18nswift.so.61.1
+  56  7507ea6f9000-7507ea707000 r--p 002e6000 08:03 1833399                    /usr/lib/swift/linux/libicui18nswift.so.61.1
+  57  7507ea707000-7507ea709000 rw-p 002f4000 08:03 1833399                    /usr/lib/swift/linux/libicui18nswift.so.61.1
+  58  7507ea709000-7507eabfb000 r-xp 00000000 08:03 1833403                    /usr/lib/swift/linux/libswiftCore.so
+  59  7507eabfb000-7507eabfc000 ---p 004f2000 08:03 1833403                    /usr/lib/swift/linux/libswiftCore.so
+  60  7507eabfc000-7507eac0e000 r--p 004f2000 08:03 1833403                    /usr/lib/swift/linux/libswiftCore.so
+  61  7507eac0e000-7507eac28000 rw-p 00504000 08:03 1833403                    /usr/lib/swift/linux/libswiftCore.so
+  62  7507eac28000-7507eac4d000 rw-p 00000000 00:00 0 
+  63  7507eac4d000-7507eac96000 r--p 00000000 08:03 1833410                    /usr/lib/swift/linux/x86_64/Dispatch.swiftmodule
+  64  7507eac96000-7507eac97000 ---p 00000000 00:00 0 
+  65  7507eac97000-7507eb497000 rw-p 00000000 00:00 0 
+  66  7507eb497000-7507eb8f7000 r--p 00000000 08:03 1833412                    /usr/lib/swift/linux/x86_64/Foundation.swiftmodule
+  67  7507eb8f7000-7507eb8f8000 ---p 00000000 00:00 0 
+  68  7507eb8f8000-7507ec0f8000 rw-p 00000000 00:00 0 
+  69  7507ec0f8000-7507ec418000 r--p 00000000 08:03 1833420                    /usr/lib/swift/linux/x86_64/Swift.swiftdoc
+  70  7507ec418000-7507ecfb7000 r--p 00000000 08:03 1833422                    /usr/lib/swift/linux/x86_64/Swift.swiftmodule
+  71  7507ecfb7000-7507ed19e000 r-xp 00000000 08:03 1817478                    /lib/x86_64-linux-gnu/libc-2.27.so
+  72  7507ed19e000-7507ed39e000 ---p 001e7000 08:03 1817478                    /lib/x86_64-linux-gnu/libc-2.27.so
+  73  7507ed39e000-7507ed3a2000 r--p 001e7000 08:03 1817478                    /lib/x86_64-linux-gnu/libc-2.27.so
+  74  7507ed3a2000-7507ed3a4000 rw-p 001eb000 08:03 1817478                    /lib/x86_64-linux-gnu/libc-2.27.so
+  75  7507ed3a4000-7507ed3a8000 rw-p 00000000 00:00 0 
+  76  7507ed3a8000-7507ed3bf000 r-xp 00000000 08:03 1817496                    /lib/x86_64-linux-gnu/libgcc_s.so.1
+  77  7507ed3bf000-7507ed5be000 ---p 00017000 08:03 1817496                    /lib/x86_64-linux-gnu/libgcc_s.so.1
+  78  7507ed5be000-7507ed5bf000 r--p 00016000 08:03 1817496                    /lib/x86_64-linux-gnu/libgcc_s.so.1
+  79  7507ed5bf000-7507ed5c0000 rw-p 00017000 08:03 1817496                    /lib/x86_64-linux-gnu/libgcc_s.so.1
+  80  7507ed5c0000-7507ed739000 r-xp 00000000 08:03 1818280                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+  81  7507ed739000-7507ed939000 ---p 00179000 08:03 1818280                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+  82  7507ed939000-7507ed943000 r--p 00179000 08:03 1818280                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+  83  7507ed943000-7507ed945000 rw-p 00183000 08:03 1818280                    /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+  84  7507ed945000-7507ed949000 rw-p 00000000 00:00 0 
+  85  7507ed949000-7507edae6000 r-xp 00000000 08:03 1817503                    /lib/x86_64-linux-gnu/libm-2.27.so
+  86  7507edae6000-7507edce5000 ---p 0019d000 08:03 1817503                    /lib/x86_64-linux-gnu/libm-2.27.so
+  87  7507edce5000-7507edce6000 r--p 0019c000 08:03 1817503                    /lib/x86_64-linux-gnu/libm-2.27.so
+  88  7507edce6000-7507edce7000 rw-p 0019d000 08:03 1817503                    /lib/x86_64-linux-gnu/libm-2.27.so
+  89  7507edce7000-7507edd0d000 r-xp 00000000 08:03 1817558                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+  90  7507edd0d000-7507edf0c000 ---p 00026000 08:03 1817558                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+  91  7507edf0c000-7507edf10000 r--p 00025000 08:03 1817558                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+  92  7507edf10000-7507edf11000 rw-p 00029000 08:03 1817558                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+  93  7507edf11000-7507edf18000 r-xp 00000000 08:03 1817543                    /lib/x86_64-linux-gnu/librt-2.27.so
+  94  7507edf18000-7507ee117000 ---p 00007000 08:03 1817543                    /lib/x86_64-linux-gnu/librt-2.27.so
+  95  7507ee117000-7507ee118000 r--p 00006000 08:03 1817543                    /lib/x86_64-linux-gnu/librt-2.27.so
+  96  7507ee118000-7507ee119000 rw-p 00007000 08:03 1817543                    /lib/x86_64-linux-gnu/librt-2.27.so
+  97  7507ee119000-7507ee135000 r-xp 00000000 08:03 1817566                    /lib/x86_64-linux-gnu/libz.so.1.2.11
+  98  7507ee135000-7507ee334000 ---p 0001c000 08:03 1817566                    /lib/x86_64-linux-gnu/libz.so.1.2.11
+  99  7507ee334000-7507ee335000 r--p 0001b000 08:03 1817566                    /lib/x86_64-linux-gnu/libz.so.1.2.11
+ 100  7507ee335000-7507ee336000 rw-p 0001c000 08:03 1817566                    /lib/x86_64-linux-gnu/libz.so.1.2.11
+ 101  7507ee336000-7507ee33c000 r-xp 00000000 08:03 1817564                    /lib/x86_64-linux-gnu/libuuid.so.1.3.0
+ 102  7507ee33c000-7507ee53b000 ---p 00006000 08:03 1817564                    /lib/x86_64-linux-gnu/libuuid.so.1.3.0
+ 103  7507ee53b000-7507ee53c000 r--p 00005000 08:03 1817564                    /lib/x86_64-linux-gnu/libuuid.so.1.3.0
+ 104  7507ee53c000-7507ee53d000 rw-p 00006000 08:03 1817564                    /lib/x86_64-linux-gnu/libuuid.so.1.3.0
+ 105  7507ee53d000-7507ee56e000 r-xp 00000000 08:03 1825325                    /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+ 106  7507ee56e000-7507ee76d000 ---p 00031000 08:03 1825325                    /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+ 107  7507ee76d000-7507ee76f000 r--p 00030000 08:03 1825325                    /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+ 108  7507ee76f000-7507ee770000 rw-p 00032000 08:03 1825325                    /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56
+ 109  7507ee770000-7507ee774000 rw-p 00000000 00:00 0 
+ 110  7507ee774000-7507ee777000 r-xp 00000000 08:03 1817488                    /lib/x86_64-linux-gnu/libdl-2.27.so
+ 111  7507ee777000-7507ee976000 ---p 00003000 08:03 1817488                    /lib/x86_64-linux-gnu/libdl-2.27.so
+ 112  7507ee976000-7507ee977000 r--p 00002000 08:03 1817488                    /lib/x86_64-linux-gnu/libdl-2.27.so
+ 113  7507ee977000-7507ee978000 rw-p 00003000 08:03 1817488                    /lib/x86_64-linux-gnu/libdl-2.27.so
+ 114  7507ee978000-7507ee97e000 r-xp 00000000 08:03 1825303                    /usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0
+ 115  7507ee97e000-7507eeb7d000 ---p 00006000 08:03 1825303                    /usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0
+ 116  7507eeb7d000-7507eeb7e000 r--p 00005000 08:03 1825303                    /usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0
+ 117  7507eeb7e000-7507eeb7f000 rw-p 00006000 08:03 1825303                    /usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0
+ 118  7507eeb7f000-7507eeb80000 rw-p 00000000 00:00 0 
+ 119  7507eeb80000-7507eeb9a000 r-xp 00000000 08:03 1817539                    /lib/x86_64-linux-gnu/libpthread-2.27.so
+ 120  7507eeb9a000-7507eed99000 ---p 0001a000 08:03 1817539                    /lib/x86_64-linux-gnu/libpthread-2.27.so
+ 121  7507eed99000-7507eed9a000 r--p 00019000 08:03 1817539                    /lib/x86_64-linux-gnu/libpthread-2.27.so
+ 122  7507eed9a000-7507eed9b000 rw-p 0001a000 08:03 1817539                    /lib/x86_64-linux-gnu/libpthread-2.27.so
+ 123  7507eed9b000-7507eed9f000 rw-p 00000000 00:00 0 
+ 124  7507eed9f000-7507eeda0000 r-xp 00000000 08:03 1817984                    /usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so
+ 125  7507eeda0000-7507eef9f000 ---p 00001000 08:03 1817984                    /usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so
+ 126  7507eef9f000-7507eefa0000 r--p 00000000 08:03 1817984                    /usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so
+ 127  7507eefa0000-7507eefa1000 rw-p 00001000 08:03 1817984                    /usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so
+ 128  7507eefa1000-7507eefca000 r-xp 00000000 08:03 1817460                    /lib/x86_64-linux-gnu/ld-2.27.so
+ 129  7507eefcc000-7507eefe3000 r--p 00000000 08:03 1833419                    /usr/lib/swift/linux/x86_64/Glibc.swiftmodule
+ 130  7507eefe3000-7507ef05e000 r--p 00000000 08:03 1833411                    /usr/lib/swift/linux/x86_64/Foundation.swiftdoc
+ 131  7507ef05e000-7507ef111000 rw-p 00000000 00:00 0 
+ 132  7507ef116000-7507ef119000 rw-p 00000000 00:00 0 
+ 133  7507ef119000-7507ef11c000 r-xp 00000000 00:00 0 
+ 134  7507ef11c000-7507ef121000 r--p 00000000 08:03 1833417                    /usr/lib/swift/linux/x86_64/Glibc.swiftdoc
+ 135  7507ef121000-7507ef12c000 r--p 00000000 08:03 1833409                    /usr/lib/swift/linux/x86_64/Dispatch.swiftdoc
+ 136  7507ef12c000-7507ef14b000 r--p 00000000 08:03 1833425                    /usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule
+ 137  7507ef14b000-7507ef18b000 r--p 00000000 00:00 0 
+ 138  7507ef18b000-7507ef1c4000 rw-p 00000000 00:00 0 
+ 139  7507ef1c4000-7507ef1c7000 r-xp 00000000 00:00 0 
+ 140  7507ef1c7000-7507ef1ca000 rw-p 00000000 00:00 0 
+ 141  7507ef1ca000-7507ef1cb000 r--p 00029000 08:03 1817460                    /lib/x86_64-linux-gnu/ld-2.27.so
+ 142  7507ef1cb000-7507ef1cc000 rw-p 0002a000 08:03 1817460                    /lib/x86_64-linux-gnu/ld-2.27.so
+ 143  7507ef1cc000-7507ef1cd000 rw-p 00000000 00:00 0 
+ 144  7ffd8507f000-7ffd850a0000 rw-p 00000000 00:00 0                          [stack]
+ 145  7ffd851e2000-7ffd851e6000 r--p 00000000 00:00 0                          [vvar]
+ 146  7ffd851e6000-7ffd851e8000 r-xp 00000000 00:00 0                          [vdso]
+
+
+▶︎  UNIQUE SHARED OBJECTS
+----------------------------------------------
+Total unique objects: 35
+
+  0  /usr/bin/swift   [3 regions]
+  1  /usr/lib/swift/linux/libswiftSwiftOnoneSupport.so   [3 regions]
+  2  /usr/lib/swift/linux/libBlocksRuntime.so   [4 regions]
+  3  /usr/lib/swift/linux/libswiftDispatch.so   [4 regions]
+  4  /usr/lib/swift/linux/libFoundation.so   [3 regions]
+  5  /usr/lib/swift/linux/libswiftGlibc.so   [4 regions]
+  6  /usr/lib/swift/linux/libdispatch.so   [3 regions]
+  7  /lib/x86_64-linux-gnu/libutil-2.27.so   [4 regions]
+  8  /usr/lib/swift/linux/libicudataswift.so.61.1   [3 regions]
+  9  /usr/lib/swift/linux/libicuucswift.so.61.1   [4 regions]
+ 10  /usr/lib/swift/linux/libicui18nswift.so.61.1   [4 regions]
+ 11  /usr/lib/swift/linux/libswiftCore.so   [4 regions]
+ 12  /usr/lib/swift/linux/x86_64/Dispatch.swiftmodule   [1 region]
+ 13  /usr/lib/swift/linux/x86_64/Foundation.swiftmodule   [1 region]
+ 14  /usr/lib/swift/linux/x86_64/Swift.swiftdoc   [1 region]
+ 15  /usr/lib/swift/linux/x86_64/Swift.swiftmodule   [1 region]
+ 16  /lib/x86_64-linux-gnu/libc-2.27.so   [4 regions]
+ 17  /lib/x86_64-linux-gnu/libgcc_s.so.1   [4 regions]
+ 18  /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25   [4 regions]
+ 19  /lib/x86_64-linux-gnu/libm-2.27.so   [4 regions]
+ 20  /lib/x86_64-linux-gnu/libtinfo.so.5.9   [4 regions]
+ 21  /lib/x86_64-linux-gnu/librt-2.27.so   [4 regions]
+ 22  /lib/x86_64-linux-gnu/libz.so.1.2.11   [4 regions]
+ 23  /lib/x86_64-linux-gnu/libuuid.so.1.3.0   [4 regions]
+ 24  /usr/lib/x86_64-linux-gnu/libedit.so.2.0.56   [4 regions]
+ 25  /lib/x86_64-linux-gnu/libdl-2.27.so   [4 regions]
+ 26  /usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0   [4 regions]
+ 27  /lib/x86_64-linux-gnu/libpthread-2.27.so   [4 regions]
+ 28  /usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so   [4 regions]
+ 29  /lib/x86_64-linux-gnu/ld-2.27.so   [3 regions]
+ 30  /usr/lib/swift/linux/x86_64/Glibc.swiftmodule   [1 region]
+ 31  /usr/lib/swift/linux/x86_64/Foundation.swiftdoc   [1 region]
+ 32  /usr/lib/swift/linux/x86_64/Glibc.swiftdoc   [1 region]
+ 33  /usr/lib/swift/linux/x86_64/Dispatch.swiftdoc   [1 region]
+ 34  /usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule   [1 region]
+
+
+▶︎  IMPORTABLE MODULES
+----------------------------------------------
+── Importable names ──
+  • Block  [module dir]
+  • BlocksRuntime  [runtime.so]
+  • CFURLSessionInterface  [module dir]
+  • CFXMLInterface  [module dir]
+  • CoreFoundation  [module dir]
+  • Dispatch  [swiftmodule, swiftdoc]
+  • Foundation  [swiftmodule, swiftdoc, runtime.so]
+  • FoundationNetworking  [swiftmodule, swiftdoc, runtime.so]
+  • FoundationXML  [swiftmodule, swiftdoc, runtime.so]
+  • Glibc  [swiftmodule, swiftdoc]
+  • Swift  [swiftmodule, swiftdoc]
+  • SwiftOnoneSupport  [swiftmodule, swiftdoc]
+  • XCTest  [swiftmodule, swiftdoc, runtime.so]
+  • _InternalSwiftSyntaxParser  [runtime.so, module dir]
+  • clang  [module dir]
+  • dispatch  [runtime.so, module dir]
+  • icudataswift  [runtime.so]
+  • icui18nswift  [runtime.so]
+  • icuucswift  [runtime.so]
+  • linux  [module dir]
+  • migrator  [module dir]
+  • os  [module dir]
+  • pm  [module dir]
+  • shims  [module dir]
+  • swiftCore  [runtime.so]
+  • swiftDispatch  [runtime.so]
+  • swiftGlibc  [runtime.so]
+  • swiftRemoteMirror  [runtime.so]
+  • swiftSwiftOnoneSupport  [runtime.so]
+  • x86_64  [module dir]
+
+── Currently loaded ──
+  • Dispatch
+  • Foundation
+  • Glibc
+  • Swift
+  • SwiftOnoneSupport
+  • swiftCore
+  • swiftDispatch
+  • swiftGlibc
+  • swiftSwiftOnoneSupport
+
+── Runtime .so files on disk ──
+  • libBlocksRuntime.so
+  • libFoundation.so
+  • libFoundationNetworking.so
+  • libFoundationXML.so
+  • libXCTest.so
+  • lib_InternalSwiftSyntaxParser.so
+  • libdispatch.so
+  • libicudataswift.so
+  • libicui18nswift.so
+  • libicuucswift.so
+  • libswiftCore.so
+  • libswiftDispatch.so
+  • libswiftGlibc.so
+  • libswiftRemoteMirror.so
+  • libswiftSwiftOnoneSupport.so
+
+── Toolchain ──
+  SWIFT_BRANCH: swift-5.1-release
+  SWIFT_PLATFORM: ubuntu18.04
+  SWIFT_VERSION: swift-5.1-RELEASE
+  SWIFT_WEBROOT: https://swift.org/builds/
+
+
+▶︎  LOADED MODULE METADATA (size + mtime)
+----------------------------------------------
+  ● LOADED   Dispatch                     289.8 KB  2019-09-19 07:57:36  /usr/lib/swift/linux/x86_64/Dispatch.swiftmodule
+  ● LOADED   Foundation                     4.4 MB  2019-09-19 07:58:08  /usr/lib/swift/linux/x86_64/Foundation.swiftmodule
+  ● LOADED   Foundation                    11.5 MB  2019-09-19 08:33:29  /usr/lib/swift/linux/libFoundation.so
+  ● LOADED   Glibc                         91.1 KB  2019-09-19 07:51:32  /usr/lib/swift/linux/x86_64/Glibc.swiftmodule
+  ● LOADED   Swift                         11.6 MB  2019-09-19 07:51:27  /usr/lib/swift/linux/x86_64/Swift.swiftmodule
+  ● LOADED   SwiftOnoneSupport            123.1 KB  2019-09-19 07:51:34  /usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule
+  ● LOADED   swiftCore                      7.3 MB  2019-09-19 07:53:45  /usr/lib/swift/linux/libswiftCore.so
+  ● LOADED   swiftDispatch                336.5 KB  2019-09-19 08:33:29  /usr/lib/swift/linux/libswiftDispatch.so
+  ● LOADED   swiftGlibc                    91.6 KB  2019-09-19 07:53:45  /usr/lib/swift/linux/libswiftGlibc.so
+  ● LOADED   swiftSwiftOnoneSupport       354.0 KB  2019-09-19 07:53:45  /usr/lib/swift/linux/libswiftSwiftOnoneSupport.so
+    on disk  BlocksRuntime                 13.1 KB  2019-09-19 07:57:31  /usr/lib/swift/linux/libBlocksRuntime.so
+    on disk  FoundationNetworking         500.8 KB  2019-09-19 07:58:18  /usr/lib/swift/linux/x86_64/FoundationNetworking.swiftmodule
+    on disk  FoundationNetworking           2.0 MB  2019-09-19 08:33:29  /usr/lib/swift/linux/libFoundationNetworking.so
+    on disk  FoundationXML                224.5 KB  2019-09-19 07:58:14  /usr/lib/swift/linux/x86_64/FoundationXML.swiftmodule
+    on disk  FoundationXML                504.1 KB  2019-09-19 08:33:29  /usr/lib/swift/linux/libFoundationXML.so
+    on disk  XCTest                       180.1 KB  2019-09-19 07:58:22  /usr/lib/swift/linux/x86_64/XCTest.swiftmodule
+    on disk  XCTest                       587.7 KB  2019-09-19 08:33:30  /usr/lib/swift/linux/libXCTest.so
+    on disk  _InternalSwiftSyntaxParser     7.6 MB  2019-09-19 07:49:22  /usr/lib/swift/linux/lib_InternalSwiftSyntaxParser.so
+    on disk  dispatch                     435.2 KB  2019-09-19 07:57:33  /usr/lib/swift/linux/libdispatch.so
+    on disk  icudataswift                     23 B  2019-09-19 08:41:10  /usr/lib/swift/linux/libicudataswift.so
+    on disk  icui18nswift                     23 B  2019-09-19 08:41:11  /usr/lib/swift/linux/libicui18nswift.so
+    on disk  icuucswift                       21 B  2019-09-19 08:41:10  /usr/lib/swift/linux/libicuucswift.so
+    on disk  swiftRemoteMirror            607.8 KB  2019-09-19 07:45:46  /usr/lib/swift/linux/libswiftRemoteMirror.so
+
+
+▶︎  DYNAMIC SYMBOL COUNTS (nm)
+----------------------------------------------
+  libBlocksRuntime.so
+      defined:   25
+      undefined: 7
+      total:     32
+  libFoundation.so
+      defined:   20131
+      undefined: 1832
+      total:     21963
+  libFoundationNetworking.so
+      defined:   3051
+      undefined: 595
+      total:     3646
+  libFoundationXML.so
+      defined:   1021
+      undefined: 418
+      total:     1439
+  libXCTest.so
+      defined:   599
+      undefined: 297
+      total:     896
+  lib_InternalSwiftSyntaxParser.so
+      defined:   15
+      undefined: 228
+      total:     243
+  libdispatch.so
+      defined:   197
+      undefined: 91
+      total:     288
+  libicudataswift.so
+      defined:   4
+      undefined: 0
+      total:     4
+  libicui18nswift.so
+      defined:   7537
+      undefined: 663
+      total:     8200
+  libicuucswift.so
+      defined:   3421
+      undefined: 74
+      total:     3495
+  libswiftCore.so
+      defined:   12768
+      undefined: 182
+      total:     12950
+  libswiftDispatch.so
+      defined:   593
+      undefined: 264
+      total:     857
+  libswiftGlibc.so
+      defined:   317
+      undefined: 148
+      total:     465
+  libswiftRemoteMirror.so
+      defined:   345
+      undefined: 51
+      total:     396
+  libswiftSwiftOnoneSupport.so
+      defined:   769
+      undefined: 50
+      total:     819
+
+
+▶︎  SYMBOL NAME SAMPLES (first 30 per library)
+----------------------------------------------
+
+  ── libBlocksRuntime.so  (showing 25 of 25) ──
+      T  Block_size
+      T  _Block_copy
+      T  _Block_copy_collectable
+      T  _Block_extended_layout
+      T  _Block_has_signature
+      T  _Block_isDeallocating
+      T  _Block_layout
+      T  _Block_object_assign
+      T  _Block_object_dispose
+      T  _Block_release
+      T  _Block_signature
+      T  _Block_tryRetain
+      T  _Block_use_RR2
+      T  _Block_use_stret
+      B  _NSConcreteAutoBlock
+      B  _NSConcreteFinalizingBlock
+      B  _NSConcreteGlobalBlock
+      B  _NSConcreteMallocBlock
+      B  _NSConcreteStackBlock
+      B  _NSConcreteWeakBlockVariable
+      B  __bss_start
+      D  _edata
+      B  _end
+      T  _fini
+      T  _init
+
+  ── libFoundation.so  (showing 30 of 20131) ──
+      T  $s10Foundation011_CFSwiftSetC5Value_5valueyyXl_yXltF
+      R  $s10Foundation012_SwiftNativeA4TypeMp
+      R  $s10Foundation012_SwiftNativeA4TypeP07MutableD0AC_AA16NSMutableCopyingTn
+      T  $s10Foundation012_SwiftNativeA4TypePAAE11descriptionSSvg
+      R  $s10Foundation012_SwiftNativeA4TypePAAE11descriptionSSvpMV
+      T  $s10Foundation012_SwiftNativeA4TypePAAE11mutableCopy4withypAA6NSZoneV_tF
+      T  $s10Foundation012_SwiftNativeA4TypePAAE13_mapUnmanagedyqd__qd__09ImmutableD0QzKXEKlF
+      T  $s10Foundation012_SwiftNativeA4TypePAAE16debugDescriptionSSvg
+      R  $s10Foundation012_SwiftNativeA4TypePAAE16debugDescriptionSSvpMV
+      T  $s10Foundation012_SwiftNativeA4TypePAAE20releaseWrappedObjectyyF
+      T  $s10Foundation012_SwiftNativeA4TypePAAE4hash4intoys6HasherVz_tF
+      T  $s10Foundation012_SwiftNativeA4TypePAAE7isEqualySbyXlF
+      T  $s10Foundation012_SwiftNativeA4TypePAAE9hashValueSivg
+      R  $s10Foundation012_SwiftNativeA4TypePAAE9hashValueSivpMV
+      R  $s10Foundation012_SwiftNativeA4TypeTL
+      T  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyV018unsafelyAssumingIsB0ACyXl_tcfC
+      T  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyV5errorSo0B3Refavg
+      R  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyV5errorSo0B3RefavpMV
+      T  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyV9_nsObjectAA7NSErrorCvg
+      R  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyV9_nsObjectAA7NSErrorCvpMV
+      T  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyVMa
+      R  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyVMn
+      D  $s10Foundation014_CFErrorSPIForA10XMLUseOnlyVN
+      T  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyV05inputC0AA0bC0CvM
+      T  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyV05inputC0AA0bC0Cvg
+      R  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyV05inputC0AA0bC0CvpMV
+      T  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyV05inputC0AA0bC0Cvs
+      T  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyV4seek2toys6UInt64V_tKF
+      T  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyVMa
+      R  $s10Foundation018_InputStreamSPIForA17NetworkingUseOnlyVMn
+
+  ── libFoundationNetworking.so  (showing 30 of 3051) ──
+      T  $s10Foundation14NSNotificationC4NameV0A10NetworkingE29NSURLCredentialStorageChangedAEvau
+      T  $s10Foundation14NSNotificationC4NameV0A10NetworkingE29NSURLCredentialStorageChangedAEvgZ
+      B  $s10Foundation14NSNotificationC4NameV0A10NetworkingE29NSURLCredentialStorageChangedAEvpZ
+      T  $s10Foundation14NSNotificationC4NameV0A10NetworkingE33NSHTTPCookieManagerCookiesChangedAEvau
+      T  $s10Foundation14NSNotificationC4NameV0A10NetworkingE33NSHTTPCookieManagerCookiesChangedAEvgZ
+      B  $s10Foundation14NSNotificationC4NameV0A10NetworkingE33NSHTTPCookieManagerCookiesChangedAEvpZ
+      T  $s10Foundation6NSLockC0A10NetworkingE13performLockedyxxyKXEKlF
+      R  $s11MutableType20FoundationNetworking012_SwiftNativecB0PTl
+      R  $s13ImmutableType20FoundationNetworking012_SwiftNativecB0PTl
+      R  $s18WrappedSwiftNSType20FoundationNetworking18_MutablePairBoxingPTl
+      R  $s20FoundationNetworking012_SwiftNativeA4TypeMp
+      R  $s20FoundationNetworking012_SwiftNativeA4TypeP07MutableE0AC_0A016NSMutableCopyingTn
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE11descriptionSSvg
+      R  $s20FoundationNetworking012_SwiftNativeA4TypePAAE11descriptionSSvpMV
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE11mutableCopy4withyp0A06NSZoneV_tF
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE13_mapUnmanagedyqd__qd__09ImmutableE0QzKXEKlF
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE16debugDescriptionSSvg
+      R  $s20FoundationNetworking012_SwiftNativeA4TypePAAE16debugDescriptionSSvpMV
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE20releaseWrappedObjectyyF
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE4hash4intoys6HasherVz_tF
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE7isEqualySbyXlF
+      T  $s20FoundationNetworking012_SwiftNativeA4TypePAAE9hashValueSivg
+      R  $s20FoundationNetworking012_SwiftNativeA4TypePAAE9hashValueSivpMV
+      R  $s20FoundationNetworking012_SwiftNativeA4TypeTL
+      T  $s20FoundationNetworking10HTTPCookieC10commentURL0A00E0VSgvg
+      R  $s20FoundationNetworking10HTTPCookieC10commentURL0A00E0VSgvgTq
+      R  $s20FoundationNetworking10HTTPCookieC10commentURL0A00E0VSgvpMV
+      T  $s20FoundationNetworking10HTTPCookieC10isHTTPOnlySbvg
+      R  $s20FoundationNetworking10HTTPCookieC10isHTTPOnlySbvgTq
+      R  $s20FoundationNetworking10HTTPCookieC10isHTTPOnlySbvpMV
+
+  ── libFoundationXML.so  (showing 30 of 1021) ──
+      T  $s10Foundation8NSObjectC0A3XMLE23withUnretainedReferenceyq_q_SPyxGXEr0_lF
+      T  $s10Foundation8NSObjectC0A3XMLE29withOpaqueUnretainedReferenceyxxSvXElF
+      T  $s13FoundationXML10XMLDTDNodeC014_objectNodeForE0yACSvFZ
+      T  $s13FoundationXML10XMLDTDNodeC10isExternalSbvg
+      R  $s13FoundationXML10XMLDTDNodeC10isExternalSbvgTq
+      R  $s13FoundationXML10XMLDTDNodeC10isExternalSbvpMV
+      T  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvM
+      R  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvMTq
+      T  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvg
+      R  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvgTq
+      R  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvpMV
+      T  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvs
+      R  $s13FoundationXML10XMLDTDNodeC12notationNameSSSgvsTq
+      T  $s13FoundationXML10XMLDTDNodeC3ptrACSv_tcfC
+      T  $s13FoundationXML10XMLDTDNodeC3ptrACSv_tcfc
+      T  $s13FoundationXML10XMLDTDNodeC4kind7optionsAcA7XMLNodeC4KindO_AG7OptionsVtcfC
+      T  $s13FoundationXML10XMLDTDNodeC4kind7optionsAcA7XMLNodeC4KindO_AG7OptionsVtcfc
+      T  $s13FoundationXML10XMLDTDNodeC7DTDKindO8rawValueAESgSu_tcfC
+      T  $s13FoundationXML10XMLDTDNodeC7DTDKindO8rawValueSuvg
+      R  $s13FoundationXML10XMLDTDNodeC7DTDKindO8rawValueSuvpMV
+      T  $s13FoundationXML10XMLDTDNodeC7DTDKindOMa
+      R  $s13FoundationXML10XMLDTDNodeC7DTDKindOMn
+      D  $s13FoundationXML10XMLDTDNodeC7DTDKindON
+      R  $s13FoundationXML10XMLDTDNodeC7DTDKindOSHAAMc
+      R  $s13FoundationXML10XMLDTDNodeC7DTDKindOSQAAMc
+      R  $s13FoundationXML10XMLDTDNodeC7DTDKindOSYAAMc
+      T  $s13FoundationXML10XMLDTDNodeC7dtdKindAC7DTDKindOvg
+      R  $s13FoundationXML10XMLDTDNodeC7dtdKindAC7DTDKindOvgTq
+      R  $s13FoundationXML10XMLDTDNodeC7dtdKindAC7DTDKindOvpMV
+      T  $s13FoundationXML10XMLDTDNodeC8publicIDSSSgvM
+
+  ── libXCTest.so  (showing 30 of 599) ──
+      T  $s6XCTest0A11ErrorDomainSSvau
+      D  $s6XCTest0A11ErrorDomainSSvp
+      T  $s6XCTest0A11ExpectationC10isInvertedSbvM
+      R  $s6XCTest0A11ExpectationC10isInvertedSbvMTq
+      T  $s6XCTest0A11ExpectationC10isInvertedSbvg
+      R  $s6XCTest0A11ExpectationC10isInvertedSbvgTq
+      R  $s6XCTest0A11ExpectationC10isInvertedSbvpMV
+      T  $s6XCTest0A11ExpectationC10isInvertedSbvs
+      R  $s6XCTest0A11ExpectationC10isInvertedSbvsTq
+      T  $s6XCTest0A11ExpectationC11_isInverted33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvM
+      T  $s6XCTest0A11ExpectationC11_isInverted33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvg
+      T  $s6XCTest0A11ExpectationC11_isInverted33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvpfi
+      T  $s6XCTest0A11ExpectationC11_isInverted33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvs
+      T  $s6XCTest0A11ExpectationC11description4file4lineACSS_s12StaticStringVSitcfC
+      R  $s6XCTest0A11ExpectationC11description4file4lineACSS_s12StaticStringVSitcfCTq
+      T  $s6XCTest0A11ExpectationC11description4file4lineACSS_s12StaticStringVSitcfc
+      T  $s6XCTest0A11ExpectationC11descriptionSSvg
+      R  $s6XCTest0A11ExpectationC11descriptionSSvpMV
+      T  $s6XCTest0A11ExpectationC11isFulfilled33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvM
+      T  $s6XCTest0A11ExpectationC11isFulfilled33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvg
+      T  $s6XCTest0A11ExpectationC11isFulfilled33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvpfi
+      T  $s6XCTest0A11ExpectationC11isFulfilled33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvs
+      T  $s6XCTest0A11ExpectationC13queue_fulfill33_0AB23C9D4D8CFCD1F794FE825608525DLL14sourceLocationSbAA06SourceM0V_tF
+      T  $s6XCTest0A11ExpectationC15didBeginWaitingyyF
+      T  $s6XCTest0A11ExpectationC15hasBeenWaitedOnSbvg
+      T  $s6XCTest0A11ExpectationC16_hasBeenWaitedOn33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvM
+      T  $s6XCTest0A11ExpectationC16_hasBeenWaitedOn33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvg
+      T  $s6XCTest0A11ExpectationC16_hasBeenWaitedOn33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvpfi
+      T  $s6XCTest0A11ExpectationC16_hasBeenWaitedOn33_0AB23C9D4D8CFCD1F794FE825608525DLLSbvs
+      T  $s6XCTest0A11ExpectationC16fulfillmentToken33_0AB23C9D4D8CFCD1F794FE825608525DLLs6UInt64VvM
+
+  ── lib_InternalSwiftSyntaxParser.so  (showing 15 of 15) ──
+      A  LLVM_7
+      T  swiftparse_diagnostic_get_fixit
+      T  swiftparse_diagnostic_get_fixit_count
+      T  swiftparse_diagnostic_get_message
+      T  swiftparse_diagnostic_get_range
+      T  swiftparse_diagnostic_get_range_count
+      T  swiftparse_diagnostic_get_severity
+      T  swiftparse_diagnostic_get_source_loc
+      T  swiftparse_parse_string
+      T  swiftparse_parser_create
+      T  swiftparse_parser_dispose
+      T  swiftparse_parser_set_diagnostic_handler
+      T  swiftparse_parser_set_node_handler
+      T  swiftparse_parser_set_node_lookup
+      T  swiftparse_syntax_structure_versioning_identifier
+
+  ── libdispatch.so  (showing 30 of 197) ──
+      B  __bss_start
+      b  __dispatch_tsd
+      B  _dispatch_begin_NSAutoReleasePool
+      T  _dispatch_block_create
+      D  _dispatch_block_special_invoke
+      T  _dispatch_bug
+      D  _dispatch_data_destructor_free
+      D  _dispatch_data_destructor_munmap
+      D  _dispatch_data_destructor_none
+      D  _dispatch_data_empty
+      D  _dispatch_data_format_type_base32
+      D  _dispatch_data_format_type_base32hex
+      D  _dispatch_data_format_type_base64
+      R  _dispatch_data_format_type_none
+      D  _dispatch_data_format_type_utf16be
+      D  _dispatch_data_format_type_utf16le
+      D  _dispatch_data_format_type_utf8
+      R  _dispatch_data_format_type_utf_any
+      B  _dispatch_end_NSAutoReleasePool
+      T  _dispatch_get_main_queue_handle_4CF
+      T  _dispatch_get_main_queue_port_4CF
+      T  _dispatch_iocntl
+      T  _dispatch_is_fork_of_multithreaded_parent
+      T  _dispatch_is_multithreaded
+      T  _dispatch_log
+      D  _dispatch_main_q
+      T  _dispatch_main_queue_callback_4CF
+      T  _dispatch_poll_for_events_4launchd
+      T  _dispatch_prohibit_transition_to_multithreaded
+      D  _dispatch_queue_attr_concurrent
+
+  ── libicudataswift.so  (showing 4 of 4) ──
+      D  __bss_start
+      D  _edata
+      D  _end
+      R  icudt_swift61_dat
+
+  ── libicui18nswift.so  (showing 30 of 7537) ──
+      T  _Z28uprv_decNumberClass_61_swiftPK9decNumberP10decContext
+      T  _Z40uspoof_getSkeletonUnicodeString_61_swiftPK13USpoofCheckerjRKN12icu_61_swift13UnicodeStringERS3_P10UErrorCode
+      T  _Z9checkImplPKN12icu_61_swift9SpoofImplERKNS_13UnicodeStringEPNS_11CheckResultEP10UErrorCode
+      T  _ZN12icu_61_swift10BucketListD0Ev
+      T  _ZN12icu_61_swift10BucketListD1Ev
+      T  _ZN12icu_61_swift10BucketListD2Ev
+      T  _ZN12icu_61_swift10CECalendar6ceToJDEiiii
+      T  _ZN12icu_61_swift10CECalendar6jdToCEEiiRiS1_S1_
+      T  _ZN12icu_61_swift10CECalendarC2ERKNS_6LocaleER10UErrorCode
+      T  _ZN12icu_61_swift10CECalendarC2ERKS0_
+      T  _ZN12icu_61_swift10CECalendarD0Ev
+      T  _ZN12icu_61_swift10CECalendarD1Ev
+      T  _ZN12icu_61_swift10CECalendarD2Ev
+      T  _ZN12icu_61_swift10CECalendaraSERKS0_
+      W  _ZN12icu_61_swift10CopyHelper8copyCE32Ej
+      T  _ZN12icu_61_swift10DateFormat10setContextE15UDisplayContextR10UErrorCode
+      T  _ZN12icu_61_swift10DateFormat10setLenientEa
+      T  _ZN12icu_61_swift10DateFormat11setCalendarERKNS_8CalendarE
+      T  _ZN12icu_61_swift10DateFormat11setTimeZoneERKNS_8TimeZoneE
+      T  _ZN12icu_61_swift10DateFormat13adoptCalendarEPNS_8CalendarE
+      T  _ZN12icu_61_swift10DateFormat13adoptTimeZoneEPNS_8TimeZoneE
+      T  _ZN12icu_61_swift10DateFormat14createInstanceEv
+      T  _ZN12icu_61_swift10DateFormat14getBestPatternERKNS_6LocaleERKNS_13UnicodeStringER10UErrorCode
+      T  _ZN12icu_61_swift10DateFormat15setNumberFormatERKNS_12NumberFormatE
+      T  _ZN12icu_61_swift10DateFormat17adoptNumberFormatEPNS_12NumberFormatE
+      T  _ZN12icu_61_swift10DateFormat18createDateInstanceENS0_6EStyleERKNS_6LocaleE
+      T  _ZN12icu_61_swift10DateFormat18createTimeInstanceENS0_6EStyleERKNS_6LocaleE
+      T  _ZN12icu_61_swift10DateFormat18setCalendarLenientEa
+      T  _ZN12icu_61_swift10DateFormat19getAvailableLocalesERi
+      T  _ZN12icu_61_swift10DateFormat19setBooleanAttributeE27UDateFormatBooleanAttributeaR10UErrorCode
+
+  ── libicuucswift.so  (showing 30 of 3421) ──
+      T  T_CString_int64ToString_61_swift
+      T  T_CString_integerToString_61_swift
+      T  T_CString_stringToInteger_61_swift
+      T  T_CString_toLowerCase_61_swift
+      T  T_CString_toUpperCase_61_swift
+      T  UCNV_FROM_U_CALLBACK_ESCAPE_61_swift
+      T  UCNV_FROM_U_CALLBACK_SKIP_61_swift
+      T  UCNV_FROM_U_CALLBACK_STOP_61_swift
+      T  UCNV_FROM_U_CALLBACK_SUBSTITUTE_61_swift
+      T  UCNV_TO_U_CALLBACK_ESCAPE_61_swift
+      T  UCNV_TO_U_CALLBACK_SKIP_61_swift
+      T  UCNV_TO_U_CALLBACK_STOP_61_swift
+      T  UCNV_TO_U_CALLBACK_SUBSTITUTE_61_swift
+      T  UDataMemory_createNewInstance_61_swift
+      T  UDataMemory_init_61_swift
+      T  UDataMemory_isLoaded_61_swift
+      T  UDataMemory_normalizeDataPointer_61_swift
+      T  UDataMemory_setData_61_swift
+      T  UDatamemory_assign_61_swift
+      D  _ASCIIData_61_swift
+      D  _Bocu1Data_61_swift
+      D  _CESU8Data_61_swift
+      D  _CompoundTextData_61_swift
+      D  _HZData_61_swift
+      D  _IMAPData_61_swift
+      D  _ISCIIData_61_swift
+      D  _ISO2022Data_61_swift
+      D  _LMBCSData11_61_swift
+      D  _LMBCSData16_61_swift
+      D  _LMBCSData17_61_swift
+
+  ── libswiftCore.so  (showing 30 of 12768) ──
+      R  $s11MaskStorages4SIMDPTl
+      R  $s11RawExponentSBTl
+      R  $s11SubSequenceSlTl
+      R  $s12SIMD2Storages10SIMDScalarPTl
+      R  $s12SIMD4Storages10SIMDScalarPTl
+      R  $s12SIMD8Storages10SIMDScalarPTl
+      R  $s13EncodedScalars16_UnicodeEncodingPTl
+      R  $s13ForwardParsers16_UnicodeEncodingPTl
+      R  $s13ReverseParsers16_UnicodeEncodingPTl
+      R  $s13SIMD16Storages10SIMDScalarPTl
+      R  $s13SIMD32Storages10SIMDScalarPTl
+      R  $s13SIMD64Storages10SIMDScalarPTl
+      R  $s14RawSignificandSBTl
+      R  $s14SIMDMaskScalars10SIMDScalarPTl
+      R  $s15_ObjectiveCTypes01_A11CBridgeablePTl
+      R  $s16FloatLiteralTypes013ExpressibleByaB0PTl
+      R  $s17StringLiteralTypes013ExpressibleByaB0PTl
+      R  $s17StringLiteralTypes0A21InterpolationProtocolPTl
+      R  $s17UnicodeScalarViewSyTl
+      R  $s18BooleanLiteralTypes013ExpressibleByaB0PTl
+      R  $s18IntegerLiteralTypes013ExpressibleByaB0PTl
+      R  $s19ArrayLiteralElements013ExpressibleByaB0PTl
+      R  $s19StringInterpolations013ExpressibleByaB0PTl
+      R  $s24UnicodeScalarLiteralTypes013ExpressibleByabC0PTl
+      R  $s2IDs12IdentifiablePTl
+      R  $s34ExtendedGraphemeClusterLiteralTypes013ExpressibleByabcD0PTl
+      R  $s3Keys30ExpressibleByDictionaryLiteralPTl
+      R  $s3Keys30KeyedDecodingContainerProtocolPTl
+      R  $s3Keys30KeyedEncodingContainerProtocolPTl
+      R  $s5BoundSXTl
+
+  ── libswiftDispatch.so  (showing 30 of 593) ──
+      T  $s8Dispatch024dispatch_io_create_with_C0yAA0A2IOCSu_AdA0A5QueueCys5Int32VctF
+      R  $s8Dispatch0A10SourceReadMp
+      R  $s8Dispatch0A10SourceReadPAA0aB8ProtocolTb
+      R  $s8Dispatch0A10SourceReadTL
+      R  $s8Dispatch0A11SourceTimerMp
+      R  $s8Dispatch0A11SourceTimerPAA0aB8ProtocolTb
+      T  $s8Dispatch0A11SourceTimerPAAE15scheduleOneshot12wallDeadline6leewayyAA0A8WallTimeV_AA0aJ8IntervalOtF
+      T  $s8Dispatch0A11SourceTimerPAAE15scheduleOneshot8deadline6leewayyAA0A4TimeV_AA0aH8IntervalOtF
+      T  $s8Dispatch0A11SourceTimerPAAE17scheduleRepeating12wallDeadline8interval6leewayyAA0A8WallTimeV_AA0aK8IntervalOAKtF
+      T  $s8Dispatch0A11SourceTimerPAAE17scheduleRepeating12wallDeadline8interval6leewayyAA0A8WallTimeV_SdAA0aK8IntervalOtF
+      T  $s8Dispatch0A11SourceTimerPAAE17scheduleRepeating8deadline8interval6leewayyAA0A4TimeV_AA0aI8IntervalOAKtF
+      T  $s8Dispatch0A11SourceTimerPAAE17scheduleRepeating8deadline8interval6leewayyAA0A4TimeV_SdAA0aI8IntervalOtF
+      T  $s8Dispatch0A11SourceTimerPAAE8schedule12wallDeadline9repeating6leewayyAA0A8WallTimeV_AA0aJ8IntervalOAKtF
+      T  $s8Dispatch0A11SourceTimerPAAE8schedule12wallDeadline9repeating6leewayyAA0A8WallTimeV_SdAA0aJ8IntervalOtF
+      T  $s8Dispatch0A11SourceTimerPAAE8schedule8deadline9repeating6leewayyAA0A4TimeV_AA0aH8IntervalOAKtF
+      T  $s8Dispatch0A11SourceTimerPAAE8schedule8deadline9repeating6leewayyAA0A4TimeV_SdAA0aH8IntervalOtF
+      R  $s8Dispatch0A11SourceTimerTL
+      R  $s8Dispatch0A11SourceWriteMp
+      R  $s8Dispatch0A11SourceWritePAA0aB8ProtocolTb
+      R  $s8Dispatch0A11SourceWriteTL
+      T  $s8Dispatch0A11SpecificKeyCACyxGycfC
+      R  $s8Dispatch0A11SpecificKeyCACyxGycfCTq
+      T  $s8Dispatch0A11SpecificKeyCACyxGycfc
+      T  $s8Dispatch0A11SpecificKeyCMa
+      R  $s8Dispatch0A11SpecificKeyCMn
+      T  $s8Dispatch0A11SpecificKeyCfD
+      T  $s8Dispatch0A11SpecificKeyCfd
+      T  $s8Dispatch0A12DataIteratorV4_ptrSVSgvpfi
+      T  $s8Dispatch0A12DataIteratorV4nexts5UInt8VSgyF
+      T  $s8Dispatch0A12DataIteratorV5_dataAcA0aB0V_tcfC
+
+  ── libswiftGlibc.so  (showing 30 of 317) ──
+      T  $s5Glibc10MAP_FAILEDSvSgvg
+      T  $s5Glibc10SEM_FAILEDSpySo5sem_taGSgvg
+      T  $s5Glibc10fpclassifyySixSFRzlF
+      T  $s5Glibc11DBL_EPSILONSdvg
+      T  $s5Glibc11DBL_MAX_EXPSivg
+      T  $s5Glibc11DBL_MIN_EXPSivg
+      T  $s5Glibc11FLT_EPSILONSfvg
+      T  $s5Glibc11FLT_MAX_EXPSivg
+      T  $s5Glibc11FLT_MIN_EXPSivg
+      T  $s5Glibc12DBL_MANT_DIGSivg
+      T  $s5Glibc12DBL_TRUE_MINSdvg
+      T  $s5Glibc12FLT_MANT_DIGSivg
+      T  $s5Glibc12FLT_TRUE_MINSfvg
+      T  $s5Glibc12LDBL_EPSILONs7Float80Vvg
+      T  $s5Glibc12LDBL_MAX_EXPSivg
+      T  $s5Glibc12LDBL_MIN_EXPSivg
+      T  $s5Glibc13LDBL_MANT_DIGSivg
+      T  $s5Glibc13LDBL_TRUE_MINs7Float80Vvg
+      R  $s5Glibc14POSIXErrorCodeO10EADDRINUSEyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO10ECONNRESETyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO10EOPNOTSUPPyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO10EOWNERDEADyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO10EPROTOTYPEyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11EINPROGRESSyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11EKEYEXPIREDyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11EKEYREVOKEDyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11EMEDIUMTYPEyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11ENETUNREACHyA2CmFWC
+      R  $s5Glibc14POSIXErrorCodeO11ENOPROTOOPTyA2CmFWC
+      T  $s5Glibc14POSIXErrorCodeO11EWOULDBLOCKACvgZ
+
+  ── libswiftRemoteMirror.so  (showing 30 of 345) ──
+      T  _Z15getTypeInfoKindRKN5swift10reflection8TypeInfoE
+      T  _Z25swift_reflection_addImageP22SwiftReflectionContextm
+      W  _ZN4llvm23SmallVectorTemplateBaseINS_8OptionalISt4pairINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbEEELb0EE4growEm
+      T  _ZN5swift10reflection13OpaqueTypeRef3getEv
+      B  _ZN5swift10reflection13OpaqueTypeRef9SingletonE
+      T  _ZN5swift10reflection13TypeConverter11getTypeInfoEPKNS0_7TypeRefE
+      T  _ZN5swift10reflection13TypeConverter12hasFixedSizeEPKNS0_7TypeRefE
+      T  _ZN5swift10reflection13TypeConverter16getEmptyTypeInfoEv
+      T  _ZN5swift10reflection13TypeConverter20getRawPointerTypeRefEv
+      T  _ZN5swift10reflection13TypeConverter20getReferenceTypeInfoENS0_13ReferenceKindENS0_17ReferenceCountingE
+      T  _ZN5swift10reflection13TypeConverter21getAnyMetatypeTypeRefEv
+      T  _ZN5swift10reflection13TypeConverter22getAnyMetatypeTypeInfoEv
+      T  _ZN5swift10reflection13TypeConverter22getNativeObjectTypeRefEv
+      T  _ZN5swift10reflection13TypeConverter22getThinFunctionTypeRefEv
+      T  _ZN5swift10reflection13TypeConverter23getThinFunctionTypeInfoEv
+      T  _ZN5swift10reflection13TypeConverter23getUnknownObjectTypeRefEv
+      T  _ZN5swift10reflection13TypeConverter24getClassInstanceTypeInfoEPKNS0_7TypeRefEj
+      T  _ZN5swift10reflection13TypeConverter24getThickFunctionTypeInfoEv
+      T  _ZN5swift10reflection14TypeRefBuilder11dumpTypeRefEN4llvm9StringRefERSob
+      T  _ZN5swift10reflection14TypeRefBuilder15dumpAllSectionsERSo
+      T  _ZN5swift10reflection14TypeRefBuilder16dumpFieldSectionERSo
+      T  _ZN5swift10reflection14TypeRefBuilder16getFieldTypeInfoEPKNS0_7TypeRefE
+      T  _ZN5swift10reflection14TypeRefBuilder16getFieldTypeRefsEPKNS0_7TypeRefERKSt4pairIPKNS0_15FieldDescriptorEPKNS0_14ReflectionInfoEERSt6vectorINS0_13FieldTypeInfoESaISG_EE
+      T  _ZN5swift10reflection14TypeRefBuilder16lookupSuperclassEPKNS0_7TypeRefE
+      T  _ZN5swift10reflection14TypeRefBuilder17lookupTypeWitnessERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES9_N4llvm9StringRefE
+      T  _ZN5swift10reflection14TypeRefBuilder18dumpCaptureSectionERSo
+      T  _ZN5swift10reflection14TypeRefBuilder18getBuiltinTypeInfoEPKNS0_7TypeRefE
+      T  _ZN5swift10reflection14TypeRefBuilder20getCaptureDescriptorEm
+      T  _ZN5swift10reflection14TypeRefBuilder21getClosureContextInfoERKNS0_17CaptureDescriptorEm
+      T  _ZN5swift10reflection14TypeRefBuilder22dumpBuiltinTypeSectionERSo
+
+  ── libswiftSwiftOnoneSupport.so  (showing 30 of 769) ──
+      T  $sS2ayxGycfCSJ_Tg5
+      T  $sS2ayxGycfCSS_Tg5
+      T  $sS2ayxGycfCSd_Tg5
+      T  $sS2ayxGycfCSf_Tg5
+      T  $sS2ayxGycfCSi_Tg5
+      T  $sS2ayxGycfCSu_Tg5
+      T  $sS2ayxGycfCs4Int8V_Tg5
+      T  $sS2ayxGycfCs5Int16V_Tg5
+      T  $sS2ayxGycfCs5Int32V_Tg5
+      T  $sS2ayxGycfCs5Int64V_Tg5
+      T  $sS2ayxGycfCs5UInt8V_Tg5
+      T  $sS2ayxGycfCs6UInt16V_Tg5
+      T  $sS2ayxGycfCs6UInt32V_Tg5
+      T  $sS2ayxGycfCs6UInt64V_Tg5
+      T  $sS2ayxGycfCs7UnicodeO6ScalarV_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySJG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySS17UnicodeScalarViewVG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySS8UTF8ViewVG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySS9UTF16ViewVG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySSG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySdG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySfG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySiG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSaySuG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays4Int8VG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays5Int16VG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays5Int32VG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays5Int64VG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays5UInt8VG_Tg5
+      T  $sSKsE8reverseds18ReversedCollectionVyxGyFSays6UInt16VG_Tg5
+
+
+▶︎  KEY C FUNCTIONS PRESENT
+----------------------------------------------
+Scanning /lib/x86_64-linux-gnu/libc-2.27.so
+Scanning /lib/x86_64-linux-gnu/libpthread-2.27.so
+
+  memory:
+    ✓ malloc
+    ✓ calloc
+    ✓ realloc
+    ✓ free
+    ✓ memcpy
+    ✓ memmove
+    ✓ memset
+  io:
+    ✓ open
+    ✓ close
+    ✓ read
+    ✓ write
+    ✓ fopen
+    ✓ fclose
+    ✓ fread
+    ✓ fwrite
+    ✓ lseek
+  process:
+    ✓ fork
+    ✓ execve
+    ✓ waitpid
+    ✓ exit
+    ✓ _exit
+    ✓ getpid
+    ✓ getppid
+  threads:
+    ✓ pthread_create
+    ✓ pthread_join
+    ✓ pthread_mutex_init
+    ✓ pthread_mutex_lock
+  net:
+    ✓ socket
+    ✓ bind
+    ✓ listen
+    ✓ accept
+    ✓ connect
+    ✓ send
+    ✓ recv
+    ✓ getaddrinfo
+  fs:
+    ✓ stat
+    ✓ fstat
+    ✓ lstat
+    ✓ unlink
+    ✓ rename
+    ✓ mkdir
+    ✓ rmdir
+    ✓ chmod
+  time:
+    ✓ time
+    ✓ gettimeofday
+    ✓ clock_gettime
+    ✓ nanosleep
+  random:
+    ✓ rand
+    ✓ random
+    ✓ getrandom
+    ✓ srand
+  env:
+    ✓ getenv
+    ✓ setenv
+    ✓ unsetenv
+    ✓ environ
+  signal:
+    ✓ signal
+    ✓ sigaction
+    ✓ kill
+    ✓ raise
+  strings:
+    ✓ strlen
+    ✓ strcmp
+    ✓ strcpy
+    ✓ snprintf
+    ✓ printf
+    ✓ fprintf
+
+
+▶︎  TIME AND LOCALE
+----------------------------------------------
+now (UTC):           2026-09-23 00:36:50
+unix epoch:          1790123810
+timezone identifier: Etc/UTC
+timezone offset:     0 s
+locale identifier:   en_US
+calendar:            gregorian
+
+
+▶︎  /proc/self/status
+----------------------------------------------
+Name:	swift
+Umask:	0022
+State:	R (running)
+Tgid:	14
+Ngid:	0
+Pid:	14
+PPid:	13
+TracerPid:	0
+Uid:	0	0	0	0
+Gid:	0	0	0	0
+FDSize:	256
+Groups:	0 
+NStgid:	14
+NSpid:	14
+NSpgid:	13
+NSsid:	1
+Kthread:	0
+VmPeak:	  628224 kB
+VmSize:	  574348 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  192152 kB
+VmRSS:	  192152 kB
+RssAnon:	   95256 kB
+RssFile:	   96896 kB
+RssShmem:	       0 kB
+VmData:	  129824 kB
+VmStk:	     132 kB
+VmExe:	  101604 kB
+VmLib:	   25200 kB
+VmPTE:	     660 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffffff
+Threads:	5
+SigQ:	7/63816
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000000000000
+SigCgt:	00000001c1805eff
+CapInh:	0000000000000000
+CapPrm:	00000000a80425fb
+CapEff:	00000000a80425fb
+CapBnd:	00000000a80425fb
+CapAmb:	0000000000000000
+NoNewPrivs:	1
+Seccomp:	2
+Seccomp_filters:	1
+Speculation_Store_Bypass:	vulnerable
+SpeculationIndirectBranch:	always enabled
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	27818
+nonvoluntary_ctxt_switches:	322
+
+
+▶︎  /proc/self/stat
+----------------------------------------------
+14 (swift) R 13 13 1 0 -1 4194560 29192 20199 3 4 294 27 33 28 20 0 5 0 42203484 588132352 47915 18446744073709551615 4194304 108235824 140726835471584 0 0 0 0 0 1098931967 0 0 0 17 1 0 0 0 0 0 108242672 112989592 491823104 140726835477246 140726835477324 140726835477324 140726835478505 0
+
+
+▶︎  /proc/self/limits
+----------------------------------------------
+Limit                     Soft Limit           Hard Limit           Units     
+Max cpu time              unlimited            unlimited            seconds   
+Max file size             unlimited            unlimited            bytes     
+Max data size             unlimited            unlimited            bytes     
+Max stack size            8388608              unlimited            bytes     
+Max core file size        unlimited            unlimited            bytes     
+Max resident set          unlimited            unlimited            bytes     
+Max processes             unlimited            unlimited            processes 
+Max open files            1048576              1048576              files     
+Max locked memory         8388608              8388608              bytes     
+Max address space         unlimited            unlimited            bytes     
+Max file locks            unlimited            unlimited            locks     
+Max pending signals       63816                63816                signals   
+Max msgqueue size         819200               819200               bytes     
+Max nice priority         0                    0                    
+Max realtime priority     0                    0                    
+Max realtime timeout      unlimited            unlimited            us        
+
+
+▶︎  MOUNTS (/proc/self/mountinfo)
+----------------------------------------------
+Total mounts: 25
+
+/  [overlay]
+/proc  [proc]
+/dev  [tmpfs]
+/dev/pts  [devpts]
+/dev/mqueue  [mqueue]
+/sys  [sysfs]
+/sys/fs/cgroup  [cgroup2]
+/etc/hosts  [ext4]
+/dev/termination-log  [ext4]
+/etc/hostname  [ext4]
+/etc/resolv.conf  [ext4]
+/dev/shm  [tmpfs]
+/proc/bus  [proc]
+/proc/fs  [proc]
+/proc/irq  [proc]
+/proc/sys  [proc]
+/proc/sysrq-trigger  [proc]
+/proc/acpi  [tmpfs]
+/proc/interrupts  [tmpfs]
+/proc/kcore  [tmpfs]
+/proc/keys  [tmpfs]
+/proc/latency_stats  [tmpfs]
+/proc/timer_list  [tmpfs]
+/proc/scsi  [tmpfs]
+/sys/firmware  [tmpfs]
+
+
+▶︎  ENVIRONMENT VARIABLES
+----------------------------------------------
+Total variables: 27
+
+CONTAINER_APP_ENV_DNS_SUFFIX=blackwater-cac8eec1.westus2.azurecontainerapps.io
+CONTAINER_APP_HOSTNAME=swiftfiddle-runner-functions-51--8f1hw96.blackwater-cac8eec1.westus2.azurecontainerapps.io
+CONTAINER_APP_NAME=swiftfiddle-runner-functions-51
+CONTAINER_APP_PORT=8000
+CONTAINER_APP_REPLICA_NAME=swiftfiddle-runner-functions-51--8f1hw96-7cfccdf8fc-jhmhw
+CONTAINER_APP_REVISION=swiftfiddle-runner-functions-51--8f1hw96
+HOME=/root
+HOSTNAME=swiftfiddle-runner-functions-51--8f1hw96-7cfccdf8fc-jhmhw
+KUBERNETES_PORT=tcp://100.100.128.1:443
+KUBERNETES_PORT_443_TCP=tcp://100.100.128.1:443
+KUBERNETES_PORT_443_TCP_ADDR=100.100.128.1
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_SERVICE_HOST=100.100.128.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+LD_LIBRARY_PATH=/usr/lib/swift/linux
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/coreutils/libstdbuf.so
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SWIFT_BRANCH=swift-5.1-release
+SWIFT_PLATFORM=ubuntu18.04
+SWIFT_SIGNING_KEY=A62AE125BBBFBB96A6E042EC925CC1CCED3D1561
+SWIFT_VERSION=swift-5.1-RELEASE
+SWIFT_WEBROOT=https://swift.org/builds/
+_STDBUF_E=L
+_STDBUF_I=0
+_STDBUF_O=L
+
+
+▶︎  /proc/meminfo
+----------------------------------------------
+MemTotal:       16379872 kB
+MemFree:          175096 kB
+MemAvailable:   14068380 kB
+Buffers:          807768 kB
+Cached:         12415808 kB
+SwapCached:            0 kB
+Active:          5970988 kB
+Inactive:        8834884 kB
+Active(anon):    1596620 kB
+Inactive(anon):      712 kB
+Active(file):    4374368 kB
+Inactive(file):  8834172 kB
+Unevictable:         376 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:              7932 kB
+Writeback:             8 kB
+AnonPages:       1582568 kB
+Mapped:          1835852 kB
+Shmem:             15036 kB
+KReclaimable:     953904 kB
+Slab:            1177328 kB
+SReclaimable:     953904 kB
+SUnreclaim:       223424 kB
+KernelStack:       18900 kB
+PageTables:        27696 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8189936 kB
+Committed_AS:   13305324 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       60068 kB
+VmallocChunk:          0 kB
+Percpu:            11296 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      199808 kB
+DirectMap2M:     9232384 kB
+DirectMap1G:     9437184 kB
+
+
+▶︎  /proc/cpuinfo
+----------------------------------------------
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+stepping	: 7
+microcode	: 0xffffffff
+cpu MHz		: 2593.906
+cache size	: 36608 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 21
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch tpr_shadow ept vpid ept_ad fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves vnmi avx512_vnni arch_capabilities
+vmx flags	: vnmi invvpid ept_x_only ept_ad tsc_offset vtpr ept vpid unrestricted_guest
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs taa mmio_stale_data retbleed bhi its
+bogomips	: 5187.81
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+stepping	: 7
+microcode	: 0xffffffff
+cpu MHz		: 2593.906
+cache size	: 36608 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 21
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch tpr_shadow ept vpid ept_ad fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves vnmi avx512_vnni arch_capabilities
+vmx flags	: vnmi invvpid ept_x_only ept_ad tsc_offset vtpr ept vpid unrestricted_guest
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs taa mmio_stale_data retbleed bhi its
+bogomips	: 5187.81
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+stepping	: 7
+microcode	: 0xffffffff
+cpu MHz		: 2593.906
+cache size	: 36608 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 21
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch tpr_shadow ept vpid ept_ad fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves vnmi avx512_vnni arch_capabilities
+vmx flags	: vnmi invvpid ept_x_only ept_ad tsc_offset vtpr ept vpid unrestricted_guest
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs taa mmio_stale_data retbleed bhi its
+bogomips	: 5187.81
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 85
+model name	: Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+stepping	: 7
+microcode	: 0xffffffff
+cpu MHz		: 2593.906
+cache size	: 36608 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 21
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch tpr_shadow ept vpid ept_ad fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap clflushopt clwb avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves vnmi avx512_vnni arch_capabilities
+vmx flags	: vnmi invvpid ept_x_only ept_ad tsc_offset vtpr ept vpid unrestricted_guest
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs taa mmio_stale_data retbleed bhi its
+bogomips	: 5187.81
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+
+▶︎  /proc/version
+----------------------------------------------
+Linux version 6.6.150.1-1.azl3 (root@CBL-Mariner) (gcc (GCC) 13.2.0, GNU ld (GNU Binutils) 2.41) #1 SMP PREEMPT_DYNAMIC Mon Aug 10 11:36:52 UTC 2026
+
+
+▶︎  BUNDLES
+----------------------------------------------
+Bundle.allBundles / allFrameworks SEGFAULT on this toolchain.
+Bundle.main:
+  path:       /usr/bin
+  identifier: <nil>
+  info keys:  
+
+
+▶︎  ENVIRONMENT CONSTRAINTS
+----------------------------------------------
+  platform:            Swift on Linux (Ubuntu 18.04 base), NOT Apple
+  swift version:       5.1-release
+  arch:                x86_64
+  libc:                glibc 2.27
+  objc interop:        DISABLED (-disable-objc-interop)
+
+  WORKING imports:
+    Foundation, FoundationNetworking, FoundationXML,
+    Dispatch, Glibc, XCTest, Swift
+
+  NOT AVAILABLE:
+    UIKit, AppKit, SwiftUI, Combine, CoreData, Metal, ARKit,
+    CoreLocation, CoreBluetooth, ObjectiveC, Darwin, MachO
+
+  NOTES:
+    • No @objc, no NSObject bridging
+    • URLSession requires FoundationNetworking
+    • XMLParser requires FoundationXML
+    • Bundle.allBundles / allFrameworks SEGFAULT on this build
+    • Bundle.main works
+══════════════════════════════════════════════
+  DUMP COMPLETE
+══════════════════════════════════════════════
